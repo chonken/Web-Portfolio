@@ -1,0 +1,56 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+}
+
+canvas {
+    width: 90%;
+    height: 90%;
+}
+
+.screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.board {
+    --l: 90vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--l);
+    height: var(--l);
+    aspect-ratio: 1/1;
+    border: 5px white double;
+}
+
+.stone {
+    position: absolute;
+    top: 2.675%;
+    left: 2.675%;
+    width: 4.65%;
+    height: 4.65%;
+    border-radius: 50%;
+}
+
+.light {
+    background-color: white;
+    color: black;
+    text-align: center;
+}
+
+.dark {
+    background-color: black;
+    border: 1.5px white solid;
+    color: white;
+    text-align: center;
+}
