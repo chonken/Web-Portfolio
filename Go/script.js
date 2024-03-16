@@ -13,6 +13,7 @@ function GoInit() {
 
 function GameStart() {
 	go = GoInit()
+	CreateStone(9, 9, board)
 	move = 1
 }
 function GamePause() {}
@@ -95,7 +96,7 @@ function SetStone(x, y) {
 	}
 	function _searchLiberty(_x, _y, camp, _checked = []) {
 		// console.log(x, y, ' => ', _x, _y, ' c => ', ..._checked)
-		if (!_inRange(_x, _y)) return _checked
+		if (!InRange(_x, _y)) return _checked
 
 		let _valid = true
 		let _self = go[_x][_y]
@@ -128,9 +129,6 @@ function SetStone(x, y) {
 
 		return _valid ? _checked : false
 	}
-	function _inRange(_x, _y) {
-		return _x >= 0 && _x <= 18 && _y >= 0 && _y <= 18
-	}
 	function _inChecked(_x, _y, _checked) {
 		return _checked.some((arr) => arr[0] === _x && arr[1] === _y)
 	}
@@ -148,7 +146,7 @@ function SetStone(x, y) {
 			const _x = x + _DIRECTION[i][0]
 			const _y = y + _DIRECTION[i][1]
 
-			if (!_inRange(_x, _y)) continue
+			if (!InRange(_x, _y)) continue
 
 			if (go[_x][_y] === 0 || go[_x][_y] % 2 === _ally)
 				_isSurrounded = false
@@ -167,6 +165,10 @@ function SetStone(x, y) {
 		return _res ? true : false
 	}
 }
+function SetPositionOfStone(x, y, stone) {
+	stone.style.top = `${2.575 + x * 5}%`
+	stone.style.left = `${2.575 + y * 5}%`
+}
 
 function CreateStone(x, y, container) {
 	const stone = document.createElement('div')
@@ -174,14 +176,13 @@ function CreateStone(x, y, container) {
 
 	stone.classList.add('stone')
 
-	if (move % 2 === 1) {
-		stone.classList.add('dark')
+	if (move === 0) {
+		stone.classList.add('preview-next', 'dark')
 	} else {
-		stone.classList.add('light')
+		stone.classList.add(move % 2 === 1 ? 'dark' : 'light')
 	}
 
-	stone.style.top = `${2.575 + x * 5}%`
-	stone.style.left = `${2.575 + y * 5}%`
+	SetPositionOfStone(x, y, stone)
 
 	container.appendChild(stone)
 }
@@ -190,6 +191,9 @@ function RemoveStone(stone) {
 	stone.remove()
 }
 
+function InRange(_x, _y) {
+	return _x >= 0 && _x <= 18 && _y >= 0 && _y <= 18
+}
 function RecordMove() {}
 function Scoring(method) {}
 
@@ -198,8 +202,8 @@ function checkGo() {
 }
 
 // 事件函數
+const stoneSize = board.clientHeight / 20
 board.addEventListener('click', function (e) {
-	const stoneSize = board.clientHeight / 20
 	const { mouseX, mouseY } = ComputeMousePosition(e)
 
 	SetStone(
@@ -210,19 +214,32 @@ board.addEventListener('click', function (e) {
 	// console.log(mouseY / stoneSize - 1, mouseX / stoneSize - 1)
 })
 const MOUSELIMIT = board.clientHeight / 40
-let lastMouseX = 0
-let lastMouseY = 0
+let lastX = 0
+let lastY = 0
 board.addEventListener('mousemove', function (e) {
 	const { mouseX, mouseY } = ComputeMousePosition(e)
 
-	const distanceX = Math.abs(mouseX - lastMouseX)
-	const distanceY = Math.abs(mouseY - lastMouseY)
+	// const distanceX = Math.abs(mouseX - lastMouseX)
+	// const distanceY = Math.abs(mouseY - lastMouseY)
+	const x = Math.round(mouseY / stoneSize) - 1
+	const y = Math.round(mouseX / stoneSize) - 1
 
-	if (distanceX + distanceY > MOUSELIMIT) {
-		lastMouseX = mouseX
-		lastMouseY = mouseY
+	// if (distanceX + distanceY > MOUSELIMIT) {
+	if (x !== lastX || y !== lastY) {
+		const previewStone = board.querySelector(`[data-move="0"]`)
+		if (!InRange(x, y)) return
+		if (move % 2 === 1 || move === 0) {
+			previewStone.classList.remove('light')
+			previewStone.classList.add('dark')
+		} else {
+			previewStone.classList.remove('dark')
+			previewStone.classList.add('light')
+		}
 
-		// console.log('Top:', mouseY, 'Left:', mouseX, MOUSELIMIT)
+		SetPositionOfStone(x, y, previewStone)
+
+		lastX = x
+		lastY = y
 	}
 })
 

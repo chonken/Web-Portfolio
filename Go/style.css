@@ -54,3 +54,7 @@ canvas {
     color: white;
     text-align: center;
 }
+
+.preview-next{
+    opacity: 0.5;
+}
