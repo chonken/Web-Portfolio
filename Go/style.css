@@ -43,7 +43,7 @@ canvas {
 }
 
 .light {
-    background-color: white;
+    background-color: lightgray;
     color: black;
     text-align: center;
 }
@@ -55,6 +55,37 @@ canvas {
     text-align: center;
 }
 
-.preview-next{
+.preview-next {
     opacity: 0.5;
+}
+
+.lastMove {
+    position: absolute;
+    display: none;
+    width: 5.5%;
+    height: 5.5%;
+    border: 3.5px gray solid;
+    border-radius: 25%;
+    transition: 0.5s ease-in-out;
+    z-index: -2;
+}
+.lastMove::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: -3.5px;
+    width: calc(100% + 7px);
+    height: 50%;
+    background-color: black;
+    z-index: -1;
+}
+.lastMove::before {
+    content: '';
+    position: absolute;
+    top: -3.5px;
+    left: 25%;
+    width: 50%;
+    height: calc(100% + 7px);
+    background-color: black;
+    z-index: -1;
 }

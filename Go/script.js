@@ -2,23 +2,26 @@ let go = undefined
 let move = 0
 let koFight = []
 let moveRecord = []
+let captureList = {} // {move:[move, ...]}
 
 const board = document.querySelector('.board')
+const graveyard = document.querySelector('.graveyard')
+const lastMove = document.querySelector('.lastMove')
 
 GameStart()
 
 function GoInit() {
 	return Array.from({ length: 19 }, () => Array(19).fill(0))
 }
-
+// 流程
 function GameStart() {
 	go = GoInit()
-	CreateStone(9, 9, board)
+	CreateStone(9, 9)
 	move = 1
 }
 function GamePause() {}
 function GameOver() {}
-
+// 基本功能、介面顯示
 function SetStone(x, y) {
 	const _DIRECTION = [
 		[0, -1],
@@ -28,17 +31,16 @@ function SetStone(x, y) {
 	]
 	let _computedCaptured = undefined
 
-	if (_validate()) {
-		go[x][y] = move
-		if (_computedCaptured()) _capture(_computedCaptured())
+	if (!_validate()) return false
 
-		CreateStone(x, y, board)
+	go[x][y] = move
+	if (_computedCaptured()) _capture(_computedCaptured())
 
-		move += 1
-	} else {
-		return false
-	}
-	// console.table(go)
+	CreateStone(x, y)
+	SetLastMove(x, y)
+	RecordMove(x, y)
+
+	move += 1
 
 	function _validate() {
 		// 同時滿足此步棋: 下在空地、不在劫禁中、不是自殺棋
@@ -76,9 +78,8 @@ function SetStone(x, y) {
 			}
 		})()
 
-		if (_isCapture()) {
+		if (_hasCaptured()) {
 			if (_isKo()) {
-				console.log(1)
 				koFight = _computedCaptured()[0]
 			}
 		} else if (_isSuicide()) {
@@ -88,14 +89,16 @@ function SetStone(x, y) {
 		return true
 	}
 	function _capture(_captured) {
-		_captured.forEach((i) => {
-			const stone = board.querySelector(`[data-move="${go[i[0]][i[1]]}"]`)
-			RemoveStone(stone)
-			go[i[0]][i[1]] = 0
+		_captured.forEach((p) => {
+			const _move = go[p[0]][p[1]]
+			if (captureList[move]) captureList[move].push(_move)
+			else captureList[move] = [_move]
+
+			MoveStone(_move, graveyard)
+			go[p[0]][p[1]] = 0
 		})
 	}
 	function _searchLiberty(_x, _y, camp, _checked = []) {
-		// console.log(x, y, ' => ', _x, _y, ' c => ', ..._checked)
 		if (!InRange(_x, _y)) return _checked
 
 		let _valid = true
@@ -133,7 +136,7 @@ function SetStone(x, y) {
 		return _checked.some((arr) => arr[0] === _x && arr[1] === _y)
 	}
 
-	function _isCapture() {
+	function _hasCaptured() {
 		return _computedCaptured() ? true : false
 	}
 	function _isKo() {
@@ -169,8 +172,14 @@ function SetPositionOfStone(x, y, stone) {
 	stone.style.top = `${2.575 + x * 5}%`
 	stone.style.left = `${2.575 + y * 5}%`
 }
+function SetLastMove(x, y) {
+	if (move === 1) lastMove.style.display = 'block'
 
-function CreateStone(x, y, container) {
+	lastMove.style.top = `${2.15 + x * 5}%`
+	lastMove.style.left = `${2.15 + y * 5}%`
+}
+
+function CreateStone(x, y) {
 	const stone = document.createElement('div')
 	stone.setAttribute('data-move', move)
 
@@ -184,21 +193,52 @@ function CreateStone(x, y, container) {
 
 	SetPositionOfStone(x, y, stone)
 
-	container.appendChild(stone)
+	board.appendChild(stone)
 }
-function RemoveStone(stone) {
-	// 移到棋盤旁
+function RemoveStone(moveNum) {
+	const stone = board.querySelector(`[data-move="${moveNum}"]`)
 	stone.remove()
 }
+function MoveStone(moveNum, moveTo) {
+	const stone = document.querySelector(`[data-move="${moveNum}"]`)
+	stone.style.display = stone.style.display === '' ? 'none' : ''
+	moveTo.appendChild(stone)
+}
+// 額外功能
+function RecordMove(x, y) {
+	moveRecord.push([x, y])
+}
+function Undo(moves = 1) {
+	for (let i = 0; i < moves; i++) {
+		if (move === 1) break
+		
+		const p = moveRecord[moveRecord.length - 1]
+		RemoveStone(move - 1)
+		if (captureList[move - 1]) {
+			captureList[move - 1].forEach((_move) => {
+				MoveStone(_move, board)
+			})
+		}
+
+		var allow = true // 模擬允許悔棋
+		if (allow) {
+			moveRecord.pop()
+			delete captureList[move - 1]
+		}
+		go[p[0]][p[1]] = 0
+		move--
+	}
+}
+
+function Scoring(method) {}
 
 function InRange(_x, _y) {
 	return _x >= 0 && _x <= 18 && _y >= 0 && _y <= 18
 }
-function RecordMove() {}
-function Scoring(method) {}
 
 function checkGo() {
 	console.table(go)
+	console.log(moveRecord)
 }
 
 // 事件函數
@@ -210,8 +250,6 @@ board.addEventListener('click', function (e) {
 		Math.round(mouseY / stoneSize) - 1,
 		Math.round(mouseX / stoneSize) - 1
 	)
-
-	// console.log(mouseY / stoneSize - 1, mouseX / stoneSize - 1)
 })
 const MOUSELIMIT = board.clientHeight / 40
 let lastX = 0
@@ -271,7 +309,7 @@ function ComputeMousePosition(event) {
 		ctx.moveTo(_size, 0)
 		ctx.lineTo(_size, cvs.width)
 	}
-	ctx.strokeStyle = '#fff'
+	ctx.strokeStyle = '#999'
 	ctx.lineWidth = 2
 	ctx.stroke()
 
@@ -286,7 +324,7 @@ function ComputeMousePosition(event) {
 				0,
 				Math.PI * 2
 			)
-			ctx.fillStyle = '#fff'
+			ctx.fillStyle = '#999'
 			ctx.fill()
 		}
 	}
