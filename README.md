@@ -5,8 +5,11 @@
 ## 目錄
 
 -   **Go** : 圍棋
--   **Scrolling Effect** : 滑鼠滾動特效(動畫)
--   **Menu Surround** : 菜單動畫(環繞)
+-   **Scrolling Effect** : 滑鼠滾動特效
+    -   **Animation** : 動畫版
+    -   **Slideshow** : 投影片版
+-   **Menu** : 菜單動畫
+    -   **Surround** : 環繞版
 
 ## 展示
 
@@ -25,6 +28,10 @@
 ![滑鼠滾動特效0](Images/Scrolling_Effect.gif '滑鼠滾動特效')
 
 > 滑鼠滾輪滾到哪，動畫效果就播到哪
+
+#### 滑鼠滾動特效(投影片)
+
+> 設定滾動吸附方式即可
 
 #### 菜單動畫(環繞)
 

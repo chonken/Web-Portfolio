@@ -1,0 +1,31 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+
+    /* 設定滾輪 */
+    overflow-y: scroll;
+    /* 設定滾動方向和吸附樣式 */
+    scroll-snap-type: y mandatory;
+}
+
+.area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    font-size: 5rem;
+
+    /* 設定吸附對齊方式 */
+    scroll-snap-align: start;
+    /* 設定滾輪是否在元素末尾處停止 */
+    scroll-snap-stop: always;
+}
