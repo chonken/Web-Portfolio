@@ -16,31 +16,36 @@ function GameOver(isWin) {
 function Init() {
 	let width = 0
 	let height = 0
-	let _mines = 0
 	if (difficulty === 0) {
 		width = 9
 		height = 9
-		_mines = 9
+		mines = 9
 	} else if (difficulty === 1) {
 		width = 16
 		height = 16
-		_mines = 40
+		mines = 40
 	} else if (difficulty === 2) {
 		width = 30
 		height = 24
-		_mines = 99
+		mines = 99
 	}
 
 	board = Array.from({ length: height }, () => Array(width).fill('[]'))
 	origin = Array.from({ length: height }, () => Array(width).fill(0))
-	while (mines <= 9) {
-		const x = getRandom(0, width)
-		const y = getRandom(0, height)
-		if (origin[y][x] === 0) {
-			origin[y][x] = -1
-			_setNum(x, y)
-			mines++
-		} else continue
+
+	// 先用一維模擬二維，取一維的亂數index，再依index轉origin位置
+	const len = width * height
+	let _origin = Array.from({ length: len }, (_, index) => index)
+	for (let i = len - 1; i >= len - mines; i--) {
+		const r = getRandom(0, i)
+
+		const _random = _origin[r]
+		const x = Math.floor(_random / width)
+		const y = _random % width
+		_setNum(x, y)
+		origin[y][x] = -1
+
+		_origin[r] = _origin[i]
 	}
 
 	function _setNum(x, y) {
@@ -74,6 +79,8 @@ function Click(x, y) {
 		board[y][x] = origin[y][x]
 	}
 
+	if (!origin.some((row) => row.includes(0))) GameOver(true)
+
 	function _findSpace(cur) {
 		console.log(cur)
 		origin[cur[1]][cur[0]] = -2
@@ -98,7 +105,7 @@ function Click(x, y) {
 }
 
 function getRandom(min, max) {
-	return Math.floor(Math.random() * (max - min - 1) + min)
+	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 function check() {
