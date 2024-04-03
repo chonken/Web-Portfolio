@@ -11,11 +11,11 @@ const lastMove = document.querySelector('.lastMove')
 GameStart()
 
 function GoInit() {
-	return Array.from({ length: 19 }, () => Array(19).fill(0))
+	go = Array.from({ length: 19 }, () => Array(19).fill(0))
 }
 // 流程
 function GameStart() {
-	go = GoInit()
+	GoInit()
 	CreateStone(9, 9)
 	move = 1
 }
