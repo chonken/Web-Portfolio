@@ -9,14 +9,42 @@ let origin = []
 let difficulty = 0 // 0: Beginner, 2: Intermediate, 3: Expert
 let mines = 1
 let board = []
+let grid = null
+let cellSize = 0
+
+class Grid {
+	constructor(width, height) {
+		this.width = width
+		this.height = height
+		this.cellSize = cellSize
+	}
+
+	draw() {
+		ctx.beginPath()
+		for (let x = 0; x < 9; x++) {
+			for (let y = 0; y < 9; y++) {
+				const _x = y * this.cellSize
+				const _y = x * this.cellSize
+
+				ctx.fillStyle = (x + y) % 2 ? '#86D58A' : '#68CA6D'
+				ctx.fillRect(_x, _y, this.cellSize, this.cellSize)
+			}
+		}
+		ctx.closePath()
+	}
+}
 
 function GameStart() {
 	Init()
+	CanvasInit()
+
+	start.style.display = 'none'
 }
 function GameOver(isWin) {
 	cvs.onclick = null
 
 	// cavas 動畫
+	Animation(isWin)
 	if (isWin) window.alert('贏了')
 	else window.alert('你已經輸了')
 
@@ -72,6 +100,34 @@ function Init() {
 		}
 	}
 }
+function CanvasInit() {
+	/** @type {HTMLCanvasElement} */
+	const _bh = window.innerHeight * 0.8
+	const _c = _bh / board.length < 25 ? 25 : _bh / board.length
+	cellSize = Math.floor(_c)
+
+	const width = cellSize * board[0].length
+	const height = cellSize * board.length
+
+	cvs.width = width
+	cvs.height = height
+
+	grid = new Grid(origin[0].length, origin.length)
+	grid.draw()
+
+	cvs.onclick = (e) => {
+		const x = Math.floor(e.offsetX / cellSize)
+		const y = Math.floor(e.offsetY / cellSize)
+
+		Click(x, y)
+		DrawNum()
+
+		const _rem = board.reduce((s, r) => {
+			return s + r.reduce((_s, i) => _s + (i === '[]'), 0)
+		}, 0)
+		if (_rem === mines) GameOver(true)
+	}
+}
 
 function Click(x, y) {
 	const DIRECTION = [
@@ -80,24 +136,18 @@ function Click(x, y) {
 		[0, 1],
 		[0, -1],
 	]
-	let res = []
 
 	if (origin[y][x] < 0) {
-		if (origin[y][x] === -1) return false
-		else return [[x, y]]
+		if (origin[y][x] === -1) return GameOver(false)
 	} else if (origin[y][x] === 0) {
 		_findSpace([x, y])
 	} else {
 		board[y][x] = origin[y][x]
-		return [[x, y]]
 	}
-
-	// if (!origin.some((row) => row.includes(0))) return true
 
 	function _findSpace(cur) {
 		origin[cur[1]][cur[0]] = -2
 		board[cur[1]][cur[0]] = 0
-		res.push(`[${cur[0]}, ${cur[1]}]`)
 		for (let i = 0; i < 4; i++) {
 			const x = cur[0] + DIRECTION[i][0]
 			const y = cur[1] + DIRECTION[i][1]
@@ -107,7 +157,6 @@ function Click(x, y) {
 			if (overflow) continue
 			if (origin[y][x] > 0) {
 				board[y][x] = origin[y][x]
-				res.push(`[${x}, ${y}]`)
 				continue
 			}
 			if (origin[y][x] !== 0) continue
@@ -115,8 +164,33 @@ function Click(x, y) {
 			_findSpace([x, y])
 		}
 	}
+}
 
-	return [...new Set(res)].map(JSON.parse)
+function DrawNum() {
+	ctx.font = cellSize + 'px sans-serif'
+	ctx.fillStyle = '#000'
+	ctx.textAlign = 'center'
+	ctx.textBaseline = 'middle'
+	for (let y = 0; y < board.length; y++) {
+		for (let x = 0; x < board[0].length; x++) {
+			const num = board[y][x]
+			if (num === '[]') continue
+
+			const originX = Math.round(cellSize * x + cellSize / 2)
+			const originY = Math.floor(cellSize * y + cellSize / 2 + 3)
+
+			ctx.fillText(num, originX, originY, cellSize, cellSize)
+		}
+	}
+}
+function Animation(isWin) {
+	ctx.clearRect(0,0,cvs.width,cvs.height)
+	requestAnimationFrame(Animation)
+
+	grid.draw()
+	DrawNum()
+
+	// 動畫
 }
 
 function getRandom(min, max) {
@@ -127,74 +201,14 @@ function getRandom(min, max) {
 beginner.onclick = () => {
 	difficulty = 0
 	GameStart()
-	setCanvas()
-	start.style.display = 'none'
 }
 intermediate.onclick = () => {
 	difficulty = 1
 	GameStart()
-	setCanvas()
-	start.style.display = 'none'
 }
 expert.onclick = () => {
 	difficulty = 2
 	GameStart()
-	setCanvas()
-	start.style.display = 'none'
-}
-
-// canvas
-function setCanvas() {
-	/** @type {HTMLCanvasElement} */
-	const _bh = window.innerHeight * 0.8
-	const _c = _bh / board.length < 25 ? 25 : _bh / board.length
-	const cell = Math.floor(_c)
-
-	const width = cell * board[0].length
-	const height = cell * board.length
-
-	cvs.width = width
-	cvs.height = height
-
-	ctx.beginPath()
-	for (let x = 0; x <= board[0].length; x++) {
-		for (let y = 0; y <= board.length; y++) {
-			const _x = y * cell
-			const _y = x * cell
-
-			ctx.fillStyle = (x + y) % 2 ? '#86D58A' : '#68CA6D'
-
-			ctx.fillRect(_x, _y, cell, cell)
-		}
-	}
-	ctx.closePath()
-
-	cvs.onclick = (e) => {
-		const x = Math.floor(e.offsetX / cell)
-		const y = Math.floor(e.offsetY / cell)
-
-		const res = Click(x, y)
-		if (typeof res === 'boolean') {
-			GameOver(res)
-		} else {
-			ctx.font = cell + 'px sans-serif'
-			ctx.fillStyle = '#000'
-			ctx.textAlign = 'center'
-			ctx.textBaseline = 'middle'
-			res.forEach((pos) => {
-				const num = origin[pos[1]][pos[0]]
-				const originX = Math.round(cell * pos[0] + cell / 2)
-				const originY = Math.floor(cell * pos[1] + cell / 2 + 3)
-
-				ctx.fillText(num, originX, originY, cell, cell)
-			})
-		}
-
-		const _rem = board.reduce((s, r) => {
-			return s + r.reduce((_s, i) => _s + (i === '[]'), 0)
-		}, 0)
-		if (_rem === mines) GameOver(true)
-	}
 }
 
 function check() {
