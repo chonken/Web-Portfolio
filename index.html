@@ -34,6 +34,7 @@
 		<div class="card" id="menu-sur">選單</div>
 		<div class="card" id="scroll-ani">滾輪特效(動畫)</div>
 		<div class="card" id="scroll-sli">滾輪特效(投影片)</div>
+		<div class="card" id="minesweeper">踩地雷</div>
 
 		<script>
 			/** @type {HTMLCanvasElement} */
@@ -357,6 +358,15 @@
 				graph.align('go', goSidePoint)
 			}
 			go.onmouseleave = () => {
+				graph.random()
+			}
+			minesweeper.onclick = () => {
+				window.location = './Minesweeper'
+			}
+			minesweeper.onmouseenter = () => {
+				graph.align('go', goSidePoint)
+			}
+			minesweeper.onmouseleave = () => {
 				graph.random()
 			}
 			menuSur.onclick = () => {

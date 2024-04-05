@@ -1,16 +1,26 @@
+const start = document.querySelector('.start')
+const beginner = document.getElementById('beginner')
+const intermediate = document.getElementById('intermediate')
+const expert = document.getElementById('expert')
+const cvs = document.querySelector('canvas')
+const ctx = cvs.getContext('2d')
+
 let origin = []
 let difficulty = 0 // 0: Beginner, 2: Intermediate, 3: Expert
 let mines = 1
 let board = []
 
-GameStart()
 function GameStart() {
-	difficulty = 0 // click diff
 	Init()
 }
 function GameOver(isWin) {
-	if (isWin) console.log('贏了')
-	else console.log('你已經輸了')
+	cvs.onclick = null
+
+	// cavas 動畫
+	if (isWin) window.alert('贏了')
+	else window.alert('你已經輸了')
+
+	start.style.display = 'flex'
 }
 
 function Init() {
@@ -40,8 +50,8 @@ function Init() {
 		const r = getRandom(0, i)
 
 		const _random = _origin[r]
-		const x = Math.floor(_random / width)
-		const y = _random % width
+		const x = _random % width
+		const y = Math.floor(_random / width)
 		_setNum(x, y)
 		origin[y][x] = -1
 
@@ -70,21 +80,24 @@ function Click(x, y) {
 		[0, 1],
 		[0, -1],
 	]
+	let res = []
+
 	if (origin[y][x] < 0) {
-		if (origin[y][x] === -1) GameOver(false)
-		else return
+		if (origin[y][x] === -1) return false
+		else return [[x, y]]
 	} else if (origin[y][x] === 0) {
 		_findSpace([x, y])
 	} else {
 		board[y][x] = origin[y][x]
+		return [[x, y]]
 	}
 
-	if (!origin.some((row) => row.includes(0))) GameOver(true)
+	// if (!origin.some((row) => row.includes(0))) return true
 
 	function _findSpace(cur) {
-		console.log(cur)
 		origin[cur[1]][cur[0]] = -2
 		board[cur[1]][cur[0]] = 0
+		res.push(`[${cur[0]}, ${cur[1]}]`)
 		for (let i = 0; i < 4; i++) {
 			const x = cur[0] + DIRECTION[i][0]
 			const y = cur[1] + DIRECTION[i][1]
@@ -94,18 +107,94 @@ function Click(x, y) {
 			if (overflow) continue
 			if (origin[y][x] > 0) {
 				board[y][x] = origin[y][x]
+				res.push(`[${x}, ${y}]`)
 				continue
 			}
 			if (origin[y][x] !== 0) continue
 
-			console.log(i)
 			_findSpace([x, y])
 		}
 	}
+
+	return [...new Set(res)].map(JSON.parse)
 }
 
 function getRandom(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+// 事件函數
+beginner.onclick = () => {
+	difficulty = 0
+	GameStart()
+	setCanvas()
+	start.style.display = 'none'
+}
+intermediate.onclick = () => {
+	difficulty = 1
+	GameStart()
+	setCanvas()
+	start.style.display = 'none'
+}
+expert.onclick = () => {
+	difficulty = 2
+	GameStart()
+	setCanvas()
+	start.style.display = 'none'
+}
+
+// canvas
+function setCanvas() {
+	/** @type {HTMLCanvasElement} */
+	const _bh = window.innerHeight * 0.8
+	const _c = _bh / board.length < 25 ? 25 : _bh / board.length
+	const cell = Math.floor(_c)
+
+	const width = cell * board[0].length
+	const height = cell * board.length
+
+	cvs.width = width
+	cvs.height = height
+
+	ctx.beginPath()
+	for (let x = 0; x <= board[0].length; x++) {
+		for (let y = 0; y <= board.length; y++) {
+			const _x = y * cell
+			const _y = x * cell
+
+			ctx.fillStyle = (x + y) % 2 ? '#86D58A' : '#68CA6D'
+
+			ctx.fillRect(_x, _y, cell, cell)
+		}
+	}
+	ctx.closePath()
+
+	cvs.onclick = (e) => {
+		const x = Math.floor(e.offsetX / cell)
+		const y = Math.floor(e.offsetY / cell)
+
+		const res = Click(x, y)
+		if (typeof res === 'boolean') {
+			GameOver(res)
+		} else {
+			ctx.font = cell + 'px sans-serif'
+			ctx.fillStyle = '#000'
+			ctx.textAlign = 'center'
+			ctx.textBaseline = 'middle'
+			res.forEach((pos) => {
+				const num = origin[pos[1]][pos[0]]
+				const originX = Math.round(cell * pos[0] + cell / 2)
+				const originY = Math.floor(cell * pos[1] + cell / 2 + 3)
+
+				ctx.fillText(num, originX, originY, cell, cell)
+			})
+		}
+
+		const _rem = board.reduce((s, r) => {
+			return s + r.reduce((_s, i) => _s + (i === '[]'), 0)
+		}, 0)
+		if (_rem === mines) GameOver(true)
+	}
 }
 
 function check() {
