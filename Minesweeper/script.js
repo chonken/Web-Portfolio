@@ -21,8 +21,8 @@ class Grid {
 
 	draw() {
 		ctx.beginPath()
-		for (let x = 0; x < 9; x++) {
-			for (let y = 0; y < 9; y++) {
+		for (let x = 0; x < this.height; x++) {
+			for (let y = 0; y < this.width; y++) {
 				const _x = y * this.cellSize
 				const _y = x * this.cellSize
 
@@ -112,7 +112,7 @@ function CanvasInit() {
 	cvs.width = width
 	cvs.height = height
 
-	grid = new Grid(origin[0].length, origin.length)
+	grid = new Grid(board[0].length, board.length)
 	grid.draw()
 
 	cvs.onclick = (e) => {
@@ -127,6 +127,7 @@ function CanvasInit() {
 		}, 0)
 		if (_rem === mines) GameOver(true)
 	}
+	cvs.oncontextmenu = (e) => {}
 }
 
 function Click(x, y) {
@@ -184,7 +185,7 @@ function DrawNum() {
 	}
 }
 function Animation(isWin) {
-	ctx.clearRect(0,0,cvs.width,cvs.height)
+	ctx.clearRect(0, 0, cvs.width, cvs.height)
 	requestAnimationFrame(Animation)
 
 	grid.draw()
