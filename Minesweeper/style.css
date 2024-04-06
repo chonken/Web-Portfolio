@@ -30,8 +30,7 @@ canvas{
     height: 40%;
     font-size: 2rem;
     color: black;
-    background-color: white;
-    opacity: 0.5;
+    background-color: lightgray;
 }
 
 .start > * {

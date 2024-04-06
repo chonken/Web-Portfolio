@@ -10,7 +10,9 @@ let difficulty = 0 // 0: Beginner, 2: Intermediate, 3: Expert
 let mines = 1
 let board = []
 let grid = null
+let flag = null
 let cellSize = 0
+const ban = {}
 
 class Grid {
 	constructor(width, height) {
@@ -33,6 +35,54 @@ class Grid {
 		ctx.closePath()
 	}
 }
+class Flag {
+	constructor(cellX, cellY) {
+		this.x = Math.round(cellSize * cellX)
+		this.y = Math.floor(cellSize * cellY)
+		this.opecity = 1
+		this.lastTime = undefined
+		this.fallen = 0
+	}
+
+	draw() {
+		const _l = Math.round(this.x + cellSize * 0.25)
+		const _t = Math.round(this.y + cellSize * 0.1)
+		const _b = Math.round(this.y + cellSize * 0.9)
+		const _w = Math.ceil(cellSize / 30)
+		ctx.beginPath()
+		ctx.moveTo(_l, _t)
+		ctx.lineTo(_l, _b)
+		ctx.closePath()
+		ctx.lineWidth = _w
+		ctx.strokeStyle = `rgba(255, 255, 255, ${this.opecity})`
+		ctx.stroke()
+
+		const _ll = Math.round(this.x + cellSize * 0.25) + Math.ceil(_w / 2)
+		const _lt = Math.round(this.y + cellSize * 0.1) + Math.ceil(_w / 2)
+		const _m = Math.round(this.y + cellSize * 0.5)
+		const _rl = Math.round(this.x + cellSize * 0.8)
+		ctx.beginPath()
+		ctx.moveTo(_ll, _lt)
+		ctx.lineTo(_rl, _m)
+		ctx.lineTo(_ll, _m)
+		ctx.closePath()
+		ctx.fillStyle = `rgba(255, 0, 0, ${this.opecity})`
+		ctx.fill()
+	}
+
+	destroy() {
+		if (!this.lastTime) this.lastTime = Date.now()
+
+		Animation(() => {
+			this.fallen += 0.25
+			this.y += this.fallen
+			this.opecity -= 0.02
+			this.draw()
+
+			return this.opecity > 0
+		})
+	}
+}
 
 function GameStart() {
 	Init()
@@ -42,9 +92,10 @@ function GameStart() {
 }
 function GameOver(isWin) {
 	cvs.onclick = null
+	cvs.oncontextmenu = null
 
 	// cavas 動畫
-	Animation(isWin)
+	Animation(() => {})
 	if (isWin) window.alert('贏了')
 	else window.alert('你已經輸了')
 
@@ -68,6 +119,7 @@ function Init() {
 		mines = 99
 	}
 
+	Object.keys(ban).forEach((key) => delete ban[key])
 	board = Array.from({ length: height }, () => Array(width).fill('[]'))
 	origin = Array.from({ length: height }, () => Array(width).fill(0))
 
@@ -127,10 +179,24 @@ function CanvasInit() {
 		}, 0)
 		if (_rem === mines) GameOver(true)
 	}
-	cvs.oncontextmenu = (e) => {}
+	cvs.oncontextmenu = (e) => {
+		e.preventDefault()
+		const x = Math.floor(e.offsetX / cellSize)
+		const y = Math.floor(e.offsetY / cellSize)
+
+		if (ban[[x, y]]) {
+			ban[[x, y]].destroy()
+			delete ban[[x, y]]
+		} else {
+			flag = new Flag(x, y)
+			ban[[x, y]] = flag
+			ban[[x, y]].draw()
+		}
+	}
 }
 
 function Click(x, y) {
+	if (ban[[x, y]]) return
 	const DIRECTION = [
 		[-1, 0],
 		[1, 0],
@@ -156,6 +222,7 @@ function Click(x, y) {
 			const maxY = origin.length - 1
 			const overflow = x < 0 || x > maxX || y < 0 || y > maxY
 			if (overflow) continue
+			if (ban[[x,y]]) continue
 			if (origin[y][x] > 0) {
 				board[y][x] = origin[y][x]
 				continue
@@ -184,14 +251,24 @@ function DrawNum() {
 		}
 	}
 }
-function Animation(isWin) {
+function Animation(fn) {
 	ctx.clearRect(0, 0, cvs.width, cvs.height)
-	requestAnimationFrame(Animation)
 
+	Draw()
+	const condition = fn()
+
+	if (condition) {
+		requestAnimationFrame(() => {
+			return Animation(fn)
+		})
+	}
+}
+function Draw() {
 	grid.draw()
 	DrawNum()
-
-	// 動畫
+	for (let b in ban){
+		ban[b].draw()
+	}
 }
 
 function getRandom(min, max) {
