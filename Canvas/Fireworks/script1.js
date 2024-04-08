@@ -2,25 +2,56 @@ const cvs = document.querySelector('canvas')
 const ctx = cvs.getContext('2d')
 
 class Partical {
-	constructor({ size, x, y, speedX, speedY, color }) {
+	constructor({
+		size,
+		x,
+		y,
+		color,
+		move = { type: '', x: null, y: null },
+		effect = null,
+	}) {
 		this.size = size
 		this.x = x
 		this.y = y
-		this.speedX = speedX
-		this.speedY = speedY
 		this.color = color
+		this.moveType = move.type
+		if (move.type === 'distance') {
+			this.targetX = move.x
+			this.targetY = move.y
+		}
+		if (move.type === 'speed') {
+			this.speedX = move.x
+			this.speedY = move.y
+		}
+		this.effect = effect
 		this.fallen = 1
-		this.lastTime = Date.now()
 	}
 
-	draw() {
-		const offsetTime = (Date.now() - this.lastTime) / 1000
+	gravity() {}
 
-		this.x += this.speedX * offsetTime
-		this.y += (this.speedY + this.fallen) * offsetTime
-		this.speedX *= 0.98
-		this.speedY *= 0.98
+	spiraling() {}
+
+	move(offsetTime) {
+		if (this.moveType === 'speed') {
+			this.speedX *= 0.98
+			this.speedY *= 0.98
+			this.x += this.speedX * offsetTime
+			this.y += (this.speedY + this.fallen) * offsetTime
+		}
+
+		if (this.moveType === 'distance') {
+			const _x = this.targetX - this.x
+			const _y = this.targetY - this.y
+
+			this.x += Math.abs(_x) > 0.1 ? _x * offsetTime : 0
+			this.y += Math.abs(_y) > 0.1 ? _y * offsetTime : 0
+		}
+	}
+
+	draw(offsetTime) {
+		this.move(offsetTime)
 		this.fallen *= this.fallen < 50 ? 1.1 : 1
+
 		const r = this.color[0]
 		const g = this.color[1]
 		const b = this.color[2]
@@ -34,27 +65,15 @@ class Partical {
 		ctx.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI)
 		ctx.fillStyle = `white`
 		ctx.fill()
-
-		this.lastTime = Date.now()
 	}
 }
 class Bloom {
 	constructor({ x, y, type, magnitude, color = null, effect = null }) {
-		const COLOR = [
-			[255, 0, 0],
-			[255, 165, 0],
-			[255, 255, 0],
-			[0, 128, 0],
-			[0, 0, 255],
-			[128, 0, 128],
-			[192, 192, 192],
-			[255, 255, 255],
-		]
 		this.x = x
 		this.y = y
 		this.type = type
 		this.size = magnitude
-		this.color = color || COLOR[getRandom(0, 7)]
+		this.color = color
 		this.effect = effect
 		this.speed = 500
 		this.alive = 1.5
@@ -113,11 +132,10 @@ class Bloom {
 				const _sX = r * Math.cos(radian * i)
 				const _sY = r * Math.sin(radian * i)
 				const param = {
-					size: 5,
+					size: 3,
 					x: this.x,
 					y: this.y,
-					speedX: _sX,
-					speedY: _sY,
+					move: { type: 'speed', x: _sX, y: _sY },
 					color: this.color,
 				}
 				this.particals.push(new Partical(param))
@@ -175,37 +193,81 @@ class Bloom {
 		}
 	}
 
-	draw() {
+	draw(offsetTime) {
 		for (let p of this.particals) {
-			p.draw()
+			p.draw(offsetTime)
 		}
 	}
 }
-class Fireworks {
-	constructor(type, magnitude, color = null, effect = null) {
-		this.type = type
-		this.size = magnitude
+class Flight {
+	constructor({ x, height, color = null, effect = null }) {
+		this.x = x
+		this.height = height
 		this.color = color
 		this.effect = effect
-		this.bloom = []
+		this.alive = 2
+		this.partical = this._init()
+	}
+
+	_init() {
+		const param = {
+			size: 3,
+			x: this.x,
+			y: cvs.height,
+			move: {
+				type: 'distance',
+				x: this.x,
+				y: this.height,
+			},
+			color: this.color,
+		}
+		return new Partical(param)
+	}
+
+	draw(offsetTime) {
+		this.partical.draw(offsetTime)
+	}
+}
+class Fireworks {
+	constructor({ type, magnitude, color = null, effect = null }) {
+		const COLOR = [
+			[255, 0, 0],
+			[255, 165, 0],
+			[255, 255, 0],
+			[0, 128, 0],
+			[0, 0, 255],
+			[128, 0, 128],
+			[192, 192, 192],
+			[255, 255, 255],
+		]
+		this.type = type
+		this.size = magnitude
+		this.color = color || COLOR[getRandom(0, 7)]
+		this.effect = effect
+		this.fireworks = []
 		this.lastTime = Date.now()
 
 		this._init()
 	}
 
 	_init() {
-		this.bloom.push(
-			new Bloom({
+		this.fireworks.push({
+			bloom: new Bloom({
 				x: 500,
 				y: 400,
 				type: 'Chrysanthemum',
 				magnitude: 'big',
-			})
-		)
+				color: this.color,
+			}),
+			flight: new Flight({
+				x: 500,
+				height: 400,
+				color: this.color,
+			}),
+		})
 	}
 
 	Animation() {
-		// ctx.globalAlpha = 0.1
 		ctx.fillStyle = 'rgba(0,0,0,0.1)'
 		ctx.fillRect(0, 0, cvs.width, cvs.height)
 		requestAnimationFrame(() => {
@@ -213,19 +275,33 @@ class Fireworks {
 		})
 
 		const offsetTime = (Date.now() - this.lastTime) / 1000
-		for (let b = 0; b < this.bloom.length; b++) {
-			if (this.bloom[b].alive <= 0) {
-				this.bloom.splice(b, 1)
-			} else {
-				this.bloom[b].draw()
-				this.bloom[b].alive -= offsetTime
+		// for (let b = 0; b < this.bloom.length; b++) {
+		// 	if (this.bloom[b].alive <= 0) {
+		// 		this.bloom.splice(b, 1)
+		// 	} else {
+		// 		this.bloom[b].draw()
+		// 		this.bloom[b].alive -= offsetTime
+		// 	}
+		// }
+		// for (let b = 0; b < this.flight.length; b++) {
+		// 	this.flight[b].draw()
+		// }
+		for (let i = 0; i < this.fireworks.length; i++) {
+			const bloom = this.fireworks[i].bloom
+			const flight = this.fireworks[i].flight
+
+			if (flight.alive >= 0) {
+				flight.draw(offsetTime)
+				flight.alive -= offsetTime
+			}
+			else if (bloom.alive >= 0) {
+				bloom.draw(offsetTime)
+				bloom.alive -= offsetTime
 			}
 		}
 		this.lastTime = Date.now()
 	}
 }
-const fireworks = new Fireworks('Chrysanthemum', 'big')
-fireworks.Animation()
 
 CanvasInit()
 
@@ -236,6 +312,9 @@ function CanvasInit() {
 
 	cvs.width = width
 	cvs.height = height
+
+	const fireworks = new Fireworks('Chrysanthemum', 'big')
+	fireworks.Animation()
 }
 
 function getRandom(min, max) {
