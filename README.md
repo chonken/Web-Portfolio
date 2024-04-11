@@ -4,8 +4,11 @@
 
 ## 目錄
 
--   **Go** : 圍棋
--   **Minesweeper** : 踩地雷
+-   **Game** : 遊戲
+    -   **Go** : 圍棋
+    -   **Minesweeper** : 踩地雷
+-   **Canvas** : Canvas
+    -   **Fireworks** : 煙火特效
 -   **Scrolling Effect** : 滑鼠滾動特效
     -   **Animation** : 動畫版
     -   **Slideshow** : 投影片版
@@ -13,6 +16,10 @@
     -   **Surround** : 環繞版
 
 ## 展示
+
+### 遊戲
+
+<details><summary>顯示更多</summary>
 
 #### 圍棋
 
@@ -28,6 +35,21 @@
 
 > 踩到地雷就會死
 
+</details>
+
+### Canvas
+
+<details><summary>顯示更多</summary>
+
+#### 煙火特效
+
+</details>
+
+### 滑鼠滾動特效
+
+<details><summary>顯示更多</summary>
+
+
 #### 滑鼠滾動特效(動畫)
 
 ![滑鼠滾動特效0](Images/Scrolling_Effect.gif '滑鼠滾動特效')
@@ -38,8 +60,17 @@
 
 > 設定滾動吸附方式即可
 
+</details>
+
+### 菜單動畫
+
+<details><summary>顯示更多</summary>
+
+
 #### 菜單動畫(環繞)
 
 ![菜單動畫0](Images/Menu_Surround.gif '菜單動畫0')
 
 > 菜單開關的動畫
+
+</details>

@@ -16,41 +16,61 @@ class Partical {
 		this.color = color
 		this.moveType = move.type
 		if (move.type === 'distance') {
+			this.speed = 300
 			this.targetX = move.x
 			this.targetY = move.y
+			this.dX = move.x - this.x
+			this.dY = move.y - this.y
 		}
 		if (move.type === 'speed') {
 			this.speedX = move.x
 			this.speedY = move.y
 		}
 		this.effect = effect
-		this.fallen = 1
+		this.gravity = 0
+		this.resistance = 0.975
+		this.accumulated = 0
+		this.alive = true
 	}
-
-	gravity() {}
-
-	spiraling() {}
 
 	move(offsetTime) {
 		if (this.moveType === 'speed') {
-			this.speedX *= 0.98
-			this.speedY *= 0.98
+			this.speedX *= this.resistance
+			this.speedY *= this.resistance
 			this.x += this.speedX * offsetTime
-			this.y += (this.speedY + this.fallen) * offsetTime
+			this.y += this.speedY * offsetTime + this.gravity * 0.1
 		}
 
 		if (this.moveType === 'distance') {
 			const _x = this.targetX - this.x
 			const _y = this.targetY - this.y
+			const _s = this.speed
 
-			this.x += Math.abs(_x) > 0.1 ? _x * offsetTime : 0
-			this.y += Math.abs(_y) > 0.1 ? _y * offsetTime : 0
+			let _dX = 0
+			let _dY = 0
+			if (Math.abs(_x) > offsetTime * _s) _dX = _x > 0 ? _s : -_s
+			if (Math.abs(_y) > offsetTime * _s) _dY = _y > 0 ? _s : -_s
+
+			// this.x += Math.abs(_x) > 0.1 ? _x * offsetTime : 0
+			// this.y += Math.abs(_y) > 0.1 ? _y * offsetTime : 0
+			if (!_dX && !_dY) this.alive = false
+
+			this.x += _dX * offsetTime + this.spiraling(_s, offsetTime)
+			this.y += _dY * offsetTime
+			this.resistance =
+				(this.speed - 50) * ((this.dY - _y) / this.dY) * offsetTime
+			this.speed -= this.resistance
 		}
+	}
+
+	spiraling(speed, offsetTime) {
+		this.accumulated += offsetTime * 50
+		return (speed * Math.sin(this.accumulated)) / 300
 	}
 
 	draw(offsetTime) {
 		this.move(offsetTime)
-		this.fallen *= this.fallen < 50 ? 1.1 : 1
+		this.gravity += 9.81 * offsetTime
 
 		const r = this.color[0]
 		const g = this.color[1]
@@ -75,7 +95,8 @@ class Bloom {
 		this.size = magnitude
 		this.color = color
 		this.effect = effect
-		this.speed = 500
+		this.speed = 400
+		this.quantity = 100
 		this.alive = 1.5
 		this.particals = []
 
@@ -85,6 +106,16 @@ class Bloom {
 	_init() {
 		switch (this.type) {
 			case 'Chrysanthemum':
+				if (this.size === 'huge') {
+					this.quantity = 150
+					this.speed = 600
+				} else if (this.size === 'normal') {
+					this.quantity = 100
+					this.speed = 400
+				} else if (this.size === 'tiny') {
+					this.quantity = 30
+					this.speed = 250
+				}
 				this.chrysanthemum()
 				break
 			case 'Peony':
@@ -96,6 +127,14 @@ class Bloom {
 			case 'Willow':
 				this.willow()
 				break
+		}
+
+		if (this.size === 'tiny') {
+			this.alive = 1.5
+		} else if (this.size === 'normal') {
+			//
+		} else if (this.size === 'huge') {
+			//
 		}
 	}
 
@@ -122,17 +161,20 @@ class Bloom {
 	}
 	chrysanthemum() {
 		const layer = 8
+		const layQua = Math.ceil(this.quantity / (layer / 2) / (layer - 1))
+		let _q = this.quantity
 		let _c = 0
 		for (let l = 0; l < layer; l++) {
-			const n = 1 + l * 5
+			const n = l * layQua < _q ? l * layQua : _q
 			const r = this.speed * Math.sin(l * (Math.PI / 16))
 			const radian = (2 * Math.PI) / n
+			const seed = 10 + (layer - l) * 2
 
 			for (let i = 0; i < n; i++) {
-				const _sX = r * Math.cos(radian * i)
-				const _sY = r * Math.sin(radian * i)
+				const _sX = r * Math.cos(radian * i) + getRandom(-seed, seed)
+				const _sY = r * Math.sin(radian * i) + getRandom(-seed, seed)
 				const param = {
-					size: 3,
+					size: 3.5,
 					x: this.x,
 					y: this.y,
 					move: { type: 'speed', x: _sX, y: _sY },
@@ -142,6 +184,7 @@ class Bloom {
 
 				_c++
 			}
+			_q -= n
 		}
 	}
 	peony() {
@@ -205,7 +248,7 @@ class Flight {
 		this.height = height
 		this.color = color
 		this.effect = effect
-		this.alive = 2
+		this.alive = true
 		this.partical = this._init()
 	}
 
@@ -225,12 +268,14 @@ class Flight {
 	}
 
 	draw(offsetTime) {
-		this.partical.draw(offsetTime)
+		if (this.partical.alive) this.partical.draw(offsetTime)
+		else this.alive = false
 	}
 }
 class Fireworks {
-	constructor({ type, magnitude, color = null, effect = null }) {
-		const COLOR = [
+	constructor() {
+		this.TYPE = ['Chrysanthemum']
+		this.COLOR = [
 			[255, 0, 0],
 			[255, 165, 0],
 			[255, 255, 0],
@@ -240,61 +285,62 @@ class Fireworks {
 			[192, 192, 192],
 			[255, 255, 255],
 		]
-		this.type = type
-		this.size = magnitude
-		this.color = color || COLOR[getRandom(0, 7)]
-		this.effect = effect
+		this.SIZE = ['huge', 'normal', 'tiny']
 		this.fireworks = []
 		this.lastTime = Date.now()
-
-		this._init()
 	}
 
-	_init() {
+	add({ x, type, magnitude, color, height } = {}) {
+		x = x || getRandom(cvs.width * 0.1, cvs.width * 0.9)
+		// const y = cvs.height,
+		type = type || this.TYPE[0]
+		magnitude = magnitude || this.SIZE[getRandom(0, 2)]
+		color = color || this.COLOR[getRandom(0, 7)]
+		// const effect = null
+		if (!height) {
+			if (magnitude === 'huge') {
+				// 改響應式
+				height = getRandom(100, 200)
+			} else if (magnitude === 'normal') {
+				height = getRandom(200, 300)
+			} else if (magnitude === 'tiny') {
+				height = getRandom(200, 400)
+			}
+		}
+
 		this.fireworks.push({
 			bloom: new Bloom({
-				x: 500,
-				y: 400,
-				type: 'Chrysanthemum',
-				magnitude: 'big',
-				color: this.color,
+				x: x,
+				y: height,
+				type: type,
+				magnitude: magnitude,
+				color: color,
 			}),
 			flight: new Flight({
-				x: 500,
-				height: 400,
-				color: this.color,
+				x: x,
+				height: height,
+				color: color,
 			}),
 		})
 	}
 
 	Animation() {
-		ctx.fillStyle = 'rgba(0,0,0,0.1)'
+		ctx.fillStyle = 'rgba(0,0,0,0.15)'
 		ctx.fillRect(0, 0, cvs.width, cvs.height)
 		requestAnimationFrame(() => {
 			return this.Animation()
 		})
 
 		const offsetTime = (Date.now() - this.lastTime) / 1000
-		// for (let b = 0; b < this.bloom.length; b++) {
-		// 	if (this.bloom[b].alive <= 0) {
-		// 		this.bloom.splice(b, 1)
-		// 	} else {
-		// 		this.bloom[b].draw()
-		// 		this.bloom[b].alive -= offsetTime
-		// 	}
-		// }
-		// for (let b = 0; b < this.flight.length; b++) {
-		// 	this.flight[b].draw()
-		// }
 		for (let i = 0; i < this.fireworks.length; i++) {
 			const bloom = this.fireworks[i].bloom
 			const flight = this.fireworks[i].flight
 
-			if (flight.alive >= 0) {
+			if (bloom.alive <= 0 && !flight.alive) this.fireworks.splice(i, 1)
+
+			if (flight.alive) {
 				flight.draw(offsetTime)
-				flight.alive -= offsetTime
-			}
-			else if (bloom.alive >= 0) {
+			} else if (bloom.alive >= 0) {
 				bloom.draw(offsetTime)
 				bloom.alive -= offsetTime
 			}
@@ -303,6 +349,7 @@ class Fireworks {
 	}
 }
 
+const fireworks = new Fireworks()
 CanvasInit()
 
 function CanvasInit() {
@@ -313,10 +360,15 @@ function CanvasInit() {
 	cvs.width = width
 	cvs.height = height
 
-	const fireworks = new Fireworks('Chrysanthemum', 'big')
 	fireworks.Animation()
+	fireworks.add({ magnitude: 'huge' })
 }
 
 function getRandom(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+// 事件函數
+cvs.onclick = (e) => {
+	fireworks.add({ x: e.offsetX })
 }

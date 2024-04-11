@@ -16,6 +16,8 @@
 			}
 			canvas {
 				display: block;
+				width: 100%;
+				height: 100%;
 			}
 
 			.card {
@@ -31,10 +33,11 @@
 	<body>
 		<canvas id="cover"></canvas>
 		<div class="card" id="go">圍棋</div>
-		<div class="card" id="menu-sur">選單</div>
+		<div class="card" id="minesweeper">踩地雷</div>
+		<div class="card" id="fireworks">煙火特效</div>
 		<div class="card" id="scroll-ani">滾輪特效(動畫)</div>
 		<div class="card" id="scroll-sli">滾輪特效(投影片)</div>
-		<div class="card" id="minesweeper">踩地雷</div>
+		<div class="card" id="menu-sur">選單</div>
 
 		<script>
 			/** @type {HTMLCanvasElement} */
@@ -42,6 +45,8 @@
 			const coverCtx = cover.getContext('2d')
 
 			const go = document.getElementById('go')
+			const minesweeper = document.getElementById('minesweeper')
+			const fireworks = document.getElementById('fireworks')
 			const menuSur = document.getElementById('menu-sur')
 			const scrollAni = document.getElementById('scroll-ani')
 			const scrollSli = document.getElementById('scroll-sli')
@@ -319,8 +324,7 @@
 			function CoverInit() {
 				cover.width = window.innerWidth
 				cover.height = window.innerHeight
-				if (window.innerHeight < document.documentElement.scrollHeight)
-					cover.width -= 17
+
 				graph.animateStart()
 
 				const coverX = cover.clientWidth
@@ -330,6 +334,14 @@
 				go.style.left =
 					getRandom(50, coverX - go.clientWidth - 50) + 'px'
 				ElementAni(go)
+				minesweeper.style.top =
+					getRandom(50, coverY - minesweeper.clientHeight - 50) + 'px'
+				minesweeper.style.left =
+					getRandom(50, coverX - minesweeper.clientWidth - 50) + 'px'
+				fireworks.style.top =
+					getRandom(50, coverY - fireworks.clientHeight - 50) + 'px'
+				fireworks.style.left =
+					getRandom(50, coverX - fireworks.clientWidth - 50) + 'px'
 				menuSur.style.top =
 					getRandom(50, coverY - menuSur.clientHeight - 50) + 'px'
 				menuSur.style.left =
@@ -352,7 +364,7 @@
 			}
 
 			go.onclick = () => {
-				window.location = './Go'
+				window.location = './Game/Go/'
 			}
 			go.onmouseenter = () => {
 				graph.align('go', goSidePoint)
@@ -361,13 +373,24 @@
 				graph.random()
 			}
 			minesweeper.onclick = () => {
-				window.location = './Minesweeper'
+				window.location = './Game/Minesweeper/'
 			}
 			minesweeper.onmouseenter = () => {
 				graph.align('go', goSidePoint)
 			}
 			minesweeper.onmouseleave = () => {
 				graph.random()
+			}
+			fireworks.onclick = () => {
+				window.location = './Canvas/Fireworks/'
+			}
+			fireworks.onmouseenter = () => {
+				graph.overflow('arroundY')
+				graph.changeSpeedY(-100)
+			}
+			fireworks.onmouseleave = () => {
+				graph.overflow('rebound')
+				graph.recoverySpeed()
 			}
 			menuSur.onclick = () => {
 				window.location = './Menu/Surround/'
