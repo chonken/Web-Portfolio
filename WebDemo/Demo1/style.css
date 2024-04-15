@@ -684,7 +684,7 @@ nav li:hover {
 /* footer */
 footer {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     justify-content: space-between;
     padding-top: 50px;
 }
@@ -704,12 +704,12 @@ footer .title {
 footer .title p {
     padding-top: 25px;
     padding-right: 25px;
-    border-top: 1px solid darkgray;
+    border-top: 1px solid darkred;
 }
 footer .content .wrape {
     display: flex;
     justify-content: space-around;
-    border-bottom: 1px solid darkgray;
+    border-bottom: 1px solid darkred;
     padding-bottom: 25px;
     width: calc(100% - 460px);
 }
@@ -720,12 +720,17 @@ footer .content .wrape .anchor {
     color: black;
 }
 footer .content .wrape h5,
-.h5 {
+footer .content .wrape .h5 {
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 30px;
     color: black;
+}
+footer .content .wrape h5 {
+    margin-bottom: 10px;
+}
+footer .content .wrape .h5 {
+    margin-bottom: 30px;
 }
 footer .content .item {
     display: flex;
@@ -736,22 +741,20 @@ footer .content .item {
 footer .info {
     display: flex;
     width: 100%;
+    padding: 0 20px;
+    padding-bottom: 20px;
 }
-footer .bottom {
+footer .info .bottom {
     display: flex;
     flex-direction: column;
     width: 460px;
 }
-footer .bottom small {
+footer .info .bottom small {
     margin-bottom: 40px;
 }
-footer .wrape {
+footer .info .wrape {
     display: flex;
     flex-grow: 1;
-}
-footer .info {
-    padding: 0 20px;
-    padding-bottom: 20px;
 }
 footer .info .item {
     display: flex;
@@ -784,4 +787,173 @@ footer .btn {
 }
 footer .btn i {
     margin-right: 10px;
+}
+footer .footer-bottom {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0;
+}
+footer .to-top {
+    position: relative;
+    color: darkred;
+    text-align: center;
+    text-decoration: none;
+    padding-top: 81px;
+    cursor: pointer;
+}
+footer .to-top::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: calc(50% - 4px);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: darkred;
+}
+footer .to-top::after {
+    content: '';
+    position: absolute;
+    top: 20.5px;
+    left: calc(50% - 22.5px);
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    border: 1px solid darkred;
+}
+@media screen and (max-width: 1180px) {
+    footer .content {
+        flex-direction: column;
+    }
+    footer .title {
+        padding-bottom: 20px;
+        width: 100%;
+    }
+    footer .content .wrape {
+        width: 100%;
+    }
+    footer .info {
+        flex-direction: column;
+    }
+    footer .info .bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+        width: 100%;
+        order: 2;
+    }
+    footer .info .bottom small {
+        margin: 0;
+        width: 300px;
+    }
+    footer .info .bottom .license {
+        margin-left: 50px;
+    }
+    footer .info .wrape {
+        order: 1;
+    }
+}
+@media screen and (max-width: 720px) {
+    footer .content {
+        flex-direction: column;
+    }
+    footer .title {
+        padding-bottom: 20px;
+        width: 100%;
+    }
+    footer .content .wrape {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    footer .content .item:nth-last-child(1) {
+        flex-direction: row;
+        padding-top: 10px;
+        width: 100%;
+        flex: none;
+    }
+    footer .content .item:nth-last-child(1) .h5 {
+        margin: 0;
+        margin-right: 25px;
+    }
+    footer .info {
+        flex-direction: column;
+    }
+    footer .info .bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+        width: 100%;
+        order: 2;
+    }
+    footer .info .bottom small {
+        margin: 0;
+        width: 300px;
+    }
+    footer .info .bottom .license {
+        margin-left: 50px;
+    }
+    footer .info .wrape {
+        order: 1;
+    }
+    footer .info .email {
+        flex-direction: column;
+    }
+    footer .info .email > div {
+        margin-bottom: 25px;
+    }
+}
+@media screen and (max-width: 540px) {
+    footer .content {
+        flex-direction: column;
+    }
+    footer .title {
+        padding-bottom: 20px;
+        width: 100%;
+    }
+    footer .content .wrape {
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    footer .content .item:nth-last-child(1) {
+        flex-direction: row;
+        padding-top: 10px;
+        width: 100%;
+        flex: none;
+    }
+    footer .content .item:nth-last-child(1) .h5 {
+        margin: 0;
+        margin-right: 25px;
+    }
+    footer .info {
+        flex-direction: column;
+    }
+    footer .info .bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+        width: 100%;
+        order: 2;
+    }
+    footer .info .bottom small {
+        margin: 0;
+        width: 300px;
+    }
+    footer .info .bottom .license {
+        margin-left: 50px;
+    }
+    footer .info .wrape {
+        flex-direction: column;
+        order: 1;
+    }
+    footer .info .email {
+        flex-direction: column;
+    }
+    footer .info .email > div {
+        margin-bottom: 25px;
+    }
 }
