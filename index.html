@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant-TW">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,6 +38,7 @@
 		<div class="card" id="scroll-ani">滾輪特效(動畫)</div>
 		<div class="card" id="scroll-sli">滾輪特效(投影片)</div>
 		<div class="card" id="menu-sur">選單</div>
+		<div class="card" id="web">網頁</div>
 
 		<script>
 			/** @type {HTMLCanvasElement} */
@@ -50,6 +51,7 @@
 			const menuSur = document.getElementById('menu-sur')
 			const scrollAni = document.getElementById('scroll-ani')
 			const scrollSli = document.getElementById('scroll-sli')
+			const web = document.getElementById('web')
 
 			const POINT_SIZE = 10
 			const MAX_POINTS = 36
@@ -357,6 +359,10 @@
 				scrollSli.style.left =
 					getRandom(50, coverX - scrollSli.clientWidth - 50) + 'px'
 				ElementAni(scrollSli)
+				web.style.top =
+					getRandom(50, coverY - web.clientHeight - 50) + 'px'
+				web.style.left =
+					getRandom(50, coverX - web.clientWidth - 50) + 'px'
 			}
 
 			function ElementAni(target) {
@@ -422,6 +428,9 @@
 			scrollSli.onmouseleave = () => {
 				graph.overflow('rebound')
 				graph.recoverySpeed()
+			}
+			web.onclick = () => {
+				window.location = './WebDemo/Demo1/'
 			}
 		</script>
 	</body>

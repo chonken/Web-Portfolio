@@ -14,6 +14,7 @@
     -   **Slideshow** : 投影片版
 -   **Menu** : 菜單動畫
     -   **Surround** : 環繞版
+-   **WebDemo** : 網頁展示
 
 ## 展示
 
