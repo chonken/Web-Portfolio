@@ -20,7 +20,11 @@
 				height: 100vh;
 			}
 
-			.card {
+			.cover {
+				position: relative;
+				overflow: hidden;
+			}
+			.cover .card {
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -28,30 +32,53 @@
 				font-family: 'Microsoft JhengHei', sans-serif;
 				cursor: pointer;
 			}
+
+			/* test */
+			div:not(.card) {
+				min-height: 500px;
+				min-width: 1px;
+			}
 		</style>
 	</head>
 	<body>
-		<canvas id="cover"></canvas>
-		<div class="card" id="go">圍棋</div>
-		<div class="card" id="minesweeper">踩地雷</div>
-		<div class="card" id="fireworks">煙火特效</div>
-		<div class="card" id="scroll-ani">滾輪特效(動畫)</div>
-		<div class="card" id="scroll-sli">滾輪特效(投影片)</div>
-		<div class="card" id="menu-sur">選單</div>
-		<div class="card" id="web">網頁</div>
+		<header></header>
+		<main>
+			<div class="cover">
+				<canvas id="cover"></canvas>
+				<!-- <div class="card" id="go">圍棋</div>
+				<div class="card" id="minesweeper">踩地雷</div>
+				<div class="card" id="fireworks">煙火特效</div>
+				<div class="card" id="scroll-ani">滾輪特效(動畫)</div>
+				<div class="card" id="scroll-sli">滾輪特效(投影片)</div>
+				<div class="card" id="menu-sur">選單</div>
+				<div class="card" id="web">網頁</div> -->
+				<div id="_game" class="card">遊戲</div>
+				<div id="_canvas" class="card">Canvas</div>
+				<div id="_scroll" class="card">滾輪特效</div>
+				<div id="_menu" class="card">選單動畫</div>
+				<div id="_web" class="card">復刻網頁</div>
+			</div>
+			<div id="game" class="game"></div>
+			<div id="canvas" class="canvas"></div>
+			<div id="scroll" class="scroll"></div>
+			<div id="menu" class="menu"></div>
+			<div id="web" class="web"></div>
+		</main>
+		<footer></footer>
 
 		<script>
 			/** @type {HTMLCanvasElement} */
 			const cover = document.getElementById('cover')
 			const coverCtx = cover.getContext('2d')
 
-			const go = document.getElementById('go')
-			const minesweeper = document.getElementById('minesweeper')
-			const fireworks = document.getElementById('fireworks')
-			const menuSur = document.getElementById('menu-sur')
-			const scrollAni = document.getElementById('scroll-ani')
-			const scrollSli = document.getElementById('scroll-sli')
-			const web = document.getElementById('web')
+			const cards = document.querySelectorAll('.card')
+			// const go = document.getElementById('go')
+			// const minesweeper = document.getElementById('minesweeper')
+			// const fireworks = document.getElementById('fireworks')
+			// const menuSur = document.getElementById('menu-sur')
+			// const scrollAni = document.getElementById('scroll-ani')
+			// const scrollSli = document.getElementById('scroll-sli')
+			// const web = document.getElementById('web')
 
 			const POINT_SIZE = 10
 			const MAX_POINTS = 36
@@ -318,10 +345,11 @@
 			}
 
 			function getRandom(min, max) {
-				return Math.floor(Math.random() * (max - min - 1) + min)
+				return Math.floor(Math.random() * (max - min + 1) + min)
 			}
 
 			const graph = new Graph(MAX_POINTS, POINT_SIZE, MAX_DISTANCE)
+			const position = {} // { element: { top, bottom, width, height }, ... }
 			CoverInit()
 			function CoverInit() {
 				cover.width = window.innerWidth
@@ -331,107 +359,266 @@
 
 				const coverX = cover.clientWidth
 				const coverY = cover.clientHeight
-				go.style.top =
-					getRandom(50, coverY - go.clientHeight - 50) + 'px'
-				go.style.left =
-					getRandom(50, coverX - go.clientWidth - 50) + 'px'
-				ElementAni(go)
-				minesweeper.style.top =
-					getRandom(50, coverY - minesweeper.clientHeight - 50) + 'px'
-				minesweeper.style.left =
-					getRandom(50, coverX - minesweeper.clientWidth - 50) + 'px'
-				fireworks.style.top =
-					getRandom(50, coverY - fireworks.clientHeight - 50) + 'px'
-				fireworks.style.left =
-					getRandom(50, coverX - fireworks.clientWidth - 50) + 'px'
-				menuSur.style.top =
-					getRandom(50, coverY - menuSur.clientHeight - 50) + 'px'
-				menuSur.style.left =
-					getRandom(50, coverX - menuSur.clientWidth - 50) + 'px'
-				ElementAni(menuSur)
-				scrollAni.style.top =
-					getRandom(50, coverY - scrollAni.clientHeight - 50) + 'px'
-				scrollAni.style.left =
-					getRandom(50, coverX - scrollAni.clientWidth - 50) + 'px'
-				ElementAni(scrollAni)
-				scrollSli.style.top =
-					getRandom(50, coverY - scrollSli.clientHeight - 50) + 'px'
-				scrollSli.style.left =
-					getRandom(50, coverX - scrollSli.clientWidth - 50) + 'px'
-				ElementAni(scrollSli)
-				web.style.top =
-					getRandom(50, coverY - web.clientHeight - 50) + 'px'
-				web.style.left =
-					getRandom(50, coverX - web.clientWidth - 50) + 'px'
+				// go.style.top =
+				// 	getRandom(50, coverY - go.clientHeight - 50) + 'px'
+				// go.style.left =
+				// 	getRandom(50, coverX - go.clientWidth - 50) + 'px'
+				// ElementAni(go)
+				// minesweeper.style.top =
+				// 	getRandom(50, coverY - minesweeper.clientHeight - 50) + 'px'
+				// minesweeper.style.left =
+				// 	getRandom(50, coverX - minesweeper.clientWidth - 50) + 'px'
+				// fireworks.style.top =
+				// 	getRandom(50, coverY - fireworks.clientHeight - 50) + 'px'
+				// fireworks.style.left =
+				// 	getRandom(50, coverX - fireworks.clientWidth - 50) + 'px'
+				// menuSur.style.top =
+				// 	getRandom(50, coverY - menuSur.clientHeight - 50) + 'px'
+				// menuSur.style.left =
+				// 	getRandom(50, coverX - menuSur.clientWidth - 50) + 'px'
+				// ElementAni(menuSur)
+				// scrollAni.style.top =
+				// 	getRandom(50, coverY - scrollAni.clientHeight - 50) + 'px'
+				// scrollAni.style.left =
+				// 	getRandom(50, coverX - scrollAni.clientWidth - 50) + 'px'
+				// ElementAni(scrollAni)
+				// scrollSli.style.top =
+				// 	getRandom(50, coverY - scrollSli.clientHeight - 50) + 'px'
+				// scrollSli.style.left =
+				// 	getRandom(50, coverX - scrollSli.clientWidth - 50) + 'px'
+				// ElementAni(scrollSli)
+				// web.style.top =
+				// 	getRandom(50, coverY - web.clientHeight - 50) + 'px'
+				// web.style.left =
+				// 	getRandom(50, coverX - web.clientWidth - 50) + 'px'
+
+				cards.forEach((element) => {
+					const x = getRandom(
+						50,
+						cover.clientWidth - element.offsetWidth - 50
+					)
+					const y = getRandom(
+						50,
+						cover.clientHeight - element.offsetHeight - 50
+					)
+					element.style.transform = `translate(${x}px, ${y}px)`
+					const _c = {
+						top: y,
+						left: x,
+						width: element.offsetWidth,
+						height: element.offsetHeight,
+					}
+					position[element.id] = _c
+
+					element.onclick = () => {
+						location = '#' + element.id.slice(1)
+					}
+					element.onmouseenter = () => {
+						graph.align(element.id, goSidePoint)
+					}
+					element.onmouseleave = () => {
+						graph.random()
+					}
+				})
+				ElementAni()
 			}
 
-			function ElementAni(target) {
-				// 之後再說
-			}
+			function ElementAni() {
+				const SPEED = 50
+				let lastTime = Date.now()
+				const animate = {
+					state: true,
+					stop() {
+						if (this.state) this.state = false
+					},
+					start() {
+						if (!this.state) {
+							this.state = true
+							lastTime = Date.now()
+							move()
+						}
+					},
+				}
+				class Position {
+					constructor(target) {
+						this.target = target
+						this.left = position[target.id].left
+						this.top = position[target.id].top
+						this.width = position[target.id].width
+						this.height = position[target.id].height
+						this.signX = getRandom(0, 1) ? -1 : 1
+						this.signY = getRandom(0, 1) ? -1 : 1
+						this.speedX = getRandom(10, SPEED)
+						this.speedY = Math.floor(
+							Math.sqrt(SPEED ** 2 - this.speedX ** 2)
+						)
+					}
+					moveX(offsetTime) {
+						const clientWidth = document.body.clientWidth
+						if (this.left <= 0) {
+							this.signX = 1
+							this.left = 1
+						} else if (this.left >= clientWidth - this.width) {
+							this.signX = -1
+							this.left = clientWidth - this.width - 1
+						} else
+							this.left += this.speedX * offsetTime * this.signX
 
-			go.onclick = () => {
-				window.location = './Game/Go/'
+						position[this.target.id].left = this.left
+					}
+					moveY(offsetTime) {
+						if (this.top <= 0) {
+							this.signY = 1
+							this.top = 1
+						} else if (this.top >= cover.height - this.height) {
+							this.signY = -1
+							this.top = cover.height - this.height - 1
+						} else this.top += this.speedY * offsetTime * this.signY
+
+						position[this.target.id].top = this.top
+					}
+					collider() {
+						for (let key in position) {
+							if (key === this.target.id) continue
+
+							const value = position[key]
+							const _rX =
+								_inRange(this.left + this.width, [
+									value.left,
+									value.left + value.width,
+								]) ||
+								_inRange(this.left, [
+									value.left,
+									value.left + value.width,
+								])
+							const _rY =
+								_inRange(this.top, [
+									value.top,
+									value.top + value.height,
+								]) ||
+								_inRange(this.top + this.height, [
+									value.top,
+									value.top + value.height,
+								])
+							if (_rX && _rY) {
+								const r = Math.abs(
+									this.left + this.width - value.left
+								)
+								const l = Math.abs(
+									this.left - (value.left + value.width)
+								)
+								const t = Math.abs(
+									this.top - (value.top + value.height)
+								)
+								const b = Math.abs(
+									this.top + this.height - value.top
+								)
+
+								const min = Math.min(r, l, t, b)
+								if (r === min) {
+									this.signX = -1
+								} else if (l === min) {
+									this.signX = 1
+								}
+								if (t === min) {
+									this.signY = 1
+								} else if (b === min) {
+									this.signY = -1
+								}
+							}
+						}
+					}
+				}
+				const pos = []
+
+				cards.forEach((target) => {
+					pos.push(new Position(target))
+				})
+				;(function move() {
+					if (animate.state) requestAnimationFrame(move)
+
+					const offsetTime = (Date.now() - lastTime) / 1000
+					for (const p of pos) {
+						p.moveX(offsetTime)
+						p.moveY(offsetTime)
+						p.collider()
+						p.target.style.transform = `translate(${p.left}px, ${p.top}px)`
+					}
+					lastTime = Date.now()
+				})()
+
+				/**
+				 * @param {Number} value -
+				 * @param {Array} block - [top, bottom] or [left, right]
+				 * @returns {Boolean} -
+				 */
+				function _inRange(value, block) {
+					return value >= block[0] && value <= block[1]
+				}
 			}
-			go.onmouseenter = () => {
-				graph.align('go', goSidePoint)
-			}
-			go.onmouseleave = () => {
-				graph.random()
-			}
-			minesweeper.onclick = () => {
-				window.location = './Game/Minesweeper/'
-			}
-			minesweeper.onmouseenter = () => {
-				graph.align('go', goSidePoint)
-			}
-			minesweeper.onmouseleave = () => {
-				graph.random()
-			}
-			fireworks.onclick = () => {
-				window.location = './Canvas/Fireworks/'
-			}
-			fireworks.onmouseenter = () => {
-				graph.overflow('arroundY')
-				graph.changeSpeedY(-100)
-			}
-			fireworks.onmouseleave = () => {
-				graph.overflow('rebound')
-				graph.recoverySpeed()
-			}
-			menuSur.onclick = () => {
-				window.location = './Menu/Surround/'
-			}
-			menuSur.onmouseenter = () => {
-				graph.align('menu', menuSidePoint)
-			}
-			menuSur.onmouseleave = () => {
-				graph.random()
-			}
-			scrollAni.onclick = () => {
-				window.location = './Scrolling%20Effect/Animation/'
-			}
-			scrollAni.onmouseenter = () => {
-				graph.overflow('arroundY')
-				graph.changeSpeedY(-100)
-			}
-			scrollAni.onmouseleave = () => {
-				graph.overflow('rebound')
-				graph.recoverySpeed()
-			}
-			scrollSli.onclick = () => {
-				window.location = './Scrolling%20Effect/Slideshow/'
-			}
-			scrollSli.onmouseenter = () => {
-				graph.overflow('arroundY')
-				graph.changeSpeedY(-100)
-			}
-			scrollSli.onmouseleave = () => {
-				graph.overflow('rebound')
-				graph.recoverySpeed()
-			}
-			web.onclick = () => {
-				window.location = './WebDemo/Demo1/'
-			}
+			// go.onclick = () => {
+			// 	window.location = './Game/Go/'
+			// }
+			// go.onmouseenter = () => {
+			// 	graph.align('go', goSidePoint)
+			// }
+			// go.onmouseleave = () => {
+			// 	graph.random()
+			// }
+			// minesweeper.onclick = () => {
+			// 	window.location = './Game/Minesweeper/'
+			// }
+			// minesweeper.onmouseenter = () => {
+			// 	graph.align('go', goSidePoint)
+			// }
+			// minesweeper.onmouseleave = () => {
+			// 	graph.random()
+			// }
+			// fireworks.onclick = () => {
+			// 	window.location = './Canvas/Fireworks/'
+			// }
+			// fireworks.onmouseenter = () => {
+			// 	graph.overflow('arroundY')
+			// 	graph.changeSpeedY(-100)
+			// }
+			// fireworks.onmouseleave = () => {
+			// 	graph.overflow('rebound')
+			// 	graph.recoverySpeed()
+			// }
+			// menuSur.onclick = () => {
+			// 	window.location = './Menu/Surround/'
+			// }
+			// menuSur.onmouseenter = () => {
+			// 	graph.align('menu', menuSidePoint)
+			// }
+			// menuSur.onmouseleave = () => {
+			// 	graph.random()
+			// }
+			// scrollAni.onclick = () => {
+			// 	window.location = './Scrolling%20Effect/Animation/'
+			// }
+			// scrollAni.onmouseenter = () => {
+			// 	graph.overflow('arroundY')
+			// 	graph.changeSpeedY(-100)
+			// }
+			// scrollAni.onmouseleave = () => {
+			// 	graph.overflow('rebound')
+			// 	graph.recoverySpeed()
+			// }
+			// scrollSli.onclick = () => {
+			// 	window.location = './Scrolling%20Effect/Slideshow/'
+			// }
+			// scrollSli.onmouseenter = () => {
+			// 	graph.overflow('arroundY')
+			// 	graph.changeSpeedY(-100)
+			// }
+			// scrollSli.onmouseleave = () => {
+			// 	graph.overflow('rebound')
+			// 	graph.recoverySpeed()
+			// }
+			// web.onclick = () => {
+			// 	window.location = './WebDemo/Demo1/'
+			// }
 		</script>
 	</body>
 </html>
