@@ -1,10 +1,4 @@
 /* 通用樣式 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    list-style: none;
-}
 :root {}
 main > * {
     margin-bottom: 80px;
@@ -25,8 +19,6 @@ p.subtitle {
 }
 .container {
     max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
 }
 @media screen and (max-width: 1400px) {
     .container {
