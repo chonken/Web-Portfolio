@@ -11,7 +11,7 @@
     -   **Fireworks** : 煙火特效
 -   **Scrolling Effect** : 滑鼠滾動特效
     -   **Animation** : 動畫版
-    -   **Slideshow** : 投影片版
+    -   **Mandatory** : 投影片版
 -   **Menu** : 菜單動畫
     -   **Surround** : 環繞版
 -   **WebDemo** : 網頁展示
@@ -34,7 +34,7 @@
 
 #### 踩地雷
 
-> 踩到地雷就會死
+> 踩到地雷就會死，初階地雷數: 9，中階地雷數: 40，高階地雷數: 99
 
 </details>
 
@@ -62,7 +62,7 @@
 
 #### 滑鼠滾動特效(投影片)
 
-> 設定滾動吸附方式即可
+> 設定滾動吸附方式即可，scroll-snap-type: (x || y) mandatory;
 
 </details>
 

@@ -29,6 +29,8 @@ const menuBtnAniToggle = () => {
 
 ;(function Init() {
 	PartnerCarousel()
+	AddCanvas()
+	CustomerCarousel(30)
 })()
 /**
  * 合作夥伴的輪播圖
@@ -71,7 +73,6 @@ function PartnerCarousel() {
 	}, 1000)
 }
 
-AddCanvas()
 function AddCanvas() {
 	skillList.forEach(function (item) {
 		item.append(Arrow(item.clientWidth / 2))
@@ -97,7 +98,6 @@ function Arrow(radius) {
 
 	return cvs
 }
-CustomerCarousel(30)
 /**
  * @param {Number} q 數量必須是3的倍數
  */
