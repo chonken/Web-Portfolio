@@ -1,4 +1,4 @@
-import { Slide } from './Carousel/Carousel.js'
+import { Slide, Focus } from './Carousel/Carousel.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -292,7 +292,12 @@ function Init() {
 			prev: game.querySelector('.prev'),
 			des: game.querySelector('.describe'),
 		},
-		canvas: {}
+		canvas: {
+			ul: canvas.querySelector('ul'),
+			li: canvas.querySelectorAll('li'),
+			next: canvas.querySelector('.next'),
+			prev: canvas.querySelector('.prev'),
+		},
 	}
 	;(async () => {
 		const res = await fetch('./exhibit.json')
@@ -448,7 +453,7 @@ function CoverElemAni() {
 	}
 }
 function GameInit(data, dom) {
-	// 自動加入所有Game底下的遊戲到ul裡
+	// 自動加入所有Game底下的作品到ul裡
 	const fragment = document.createDocumentFragment()
 	let _c = 0
 	for (const item in data) {
@@ -467,14 +472,14 @@ function GameInit(data, dom) {
 	dom.li = dom.ul.querySelectorAll('li') // 更新li
 
 	// 輪播圖模組
-	const gameCaro = Slide(dom.li, dom.ul)
+	const slide = Slide(dom.li, dom.ul)
 	dom.li = dom.ul.querySelectorAll('li') // 更新li
-	gameCaro.infinity()
+	slide.infinity()
 	dom.next.onclick = () => {
-		gameCaro.next()
+		slide.next()
 	}
 	dom.prev.onclick = () => {
-		gameCaro.prev()
+		slide.prev()
 	}
 	// 描述
 	for (const item of dom.li) {
@@ -482,26 +487,77 @@ function GameInit(data, dom) {
 		item.onmouseenter = () => {
 			dom.des.style.opacity = '1'
 			dom.des.textContent = g ? data[g].des : '尚未開發'
-			gameCaro.stop()
+			slide.stop()
 		}
 		item.onmouseleave = () => {
 			dom.des.textContent = ''
 			dom.des.style.opacity = '0'
-			gameCaro.infinity()
+			slide.infinity()
 		}
-		item.querySelector('img').onerror = function() {
+		item.querySelector('img').onerror = function () {
 			this.src = './assets/laptop-code-solid.svg'
 		}
-		if (g){
-			item.onclick =()=>{
+		if (g) {
+			item.onclick = () => {
 				location = `./Game/${g}/`
 			}
 		}
-		
 	}
 }
-function CanvasInit (data, dom){
+function CanvasInit(data, dom) {
+	// 自動加入所有Canvas底下的作品到ul裡
+	const fragment = document.createDocumentFragment()
+	let _c = 0
+	for (const item in data) {
+		const li = document.createElement('li')
+		const img = document.createElement('img')
+		img.setAttribute('src', `./Images/Canvas_${item}_0.gif`)
+		li.append(img)
+		li.setAttribute('data-canvas', item)
+		fragment.append(li)
+		_c++
+	}
+	for (let i = 0; i < Math.min(_c, dom.li.length); i++) {
+		dom.li[i].remove()
+	}
+	dom.ul.append(fragment)
+	dom.next.style.zIndex = '1'
+	dom.prev.style.zIndex = '1'
+	dom.li = dom.ul.querySelectorAll('li') // 更新li
 
+	const focus = Focus(dom.li, dom.ul)
+	focus.infinity()
+	for (const li of dom.li) {
+		li.onclick = function () {
+			focus.index(this)
+		}
+	}
+	dom.next.onclick = () => {
+		focus.next()
+	}
+	dom.prev.onclick = () => {
+		focus.prev()
+	}
+
+	for (const item of dom.li) {
+		const c = item.getAttribute('data-canvas')
+		item.onmouseenter = () => {
+			focus.stop()
+			if (c && focus.active() === item) {
+				item.addEventListener('click', linkTo)
+			}
+		}
+		item.onmouseleave = () => {
+			item.removeEventListener('click', linkTo)
+			focus.infinity()
+		}
+		item.querySelector('img').onerror = function () {
+			this.src = './assets/laptop-code-solid.svg'
+		}
+		function linkTo() {
+			location = `./Canvas/${c}/`
+		}
+	}
 }
 
 // go.onclick = () => {

@@ -44,7 +44,7 @@
 
 #### 煙火特效
 
-![煙火特效0](Images/Canvas_Fireworks.gif '煙火特效')
+![煙火特效0](Images/Canvas_Fireworks_0.gif '煙火特效')
 
 > 點擊畫面會出現煙火
 
@@ -56,7 +56,7 @@
 
 #### 滑鼠滾動特效(動畫)
 
-![滑鼠滾動特效0](Images/Scrolling_Effect.gif '滑鼠滾動特效')
+![滑鼠滾動特效0](Images/Scrolling_Effect_0.gif '滑鼠滾動特效')
 
 > 滑鼠滾輪滾到哪，動畫效果就播到哪
 
@@ -72,7 +72,7 @@
 
 #### 菜單動畫(環繞)
 
-![菜單動畫0](Images/Menu_Surround.gif '菜單動畫0')
+![菜單動畫0](Images/Menu_Surround_0.gif '菜單動畫0')
 
 > 菜單開關的動畫
 

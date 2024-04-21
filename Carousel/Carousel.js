@@ -1,6 +1,6 @@
 /**
- * @typedef {Object} CarouselObject
- * @property {function(number)} infinity - 無限撥放下一張，間隔秒數(毫秒)
+ * @typedef {Object} SlideObj
+ * @property {function(number=)} infinity - 無限撥放下一張，間隔秒數(毫秒)，預設為5000毫秒
  * @property {function} stop - 停止撥放
  * @property {function} next - 撥放下一張
  * @property {function} prev - 撥放上一張
@@ -9,9 +9,15 @@
  * 平滑移動的輪播圖
  * @param {NodeList} itemList 輪播圖的物品列
  * @param {Element} target 存放物品列的目標元素
- * @returns {CarouselObject} 可調用 infinity()、next()、prev()
+ * @param {number} transition 過渡時間(秒)，優先級: 參數 > 最終樣式 > 默認值 = 0.5
+ * @returns {SlideObj} 可調用 infinity()、stop()、next()、prev()
  */
-export function Slide(itemList, target) {
+export function Slide(itemList, target, transition = null) {
+	const _t = parseInt(
+		getComputedStyle(itemList[0]).transitionDuration.replace('s', '')
+	)
+	transition = transition || _t ? _t : 0.5
+
 	const fragmentBefore = document.createDocumentFragment()
 	const fragmentAfter = document.createDocumentFragment()
 	const len = itemList.length
@@ -48,14 +54,16 @@ export function Slide(itemList, target) {
 
 	function next() {
 		offsetX -= nodesOverallWidth[i < 0 ? len + i : i]
-		target.style.transition = '0.5s'
+		target.style.transitionDuration = transition + 's'
+		target.style.transitionProperty = 'all'
 		target.style.transform = `translateX(${offsetX}px)`
 		i++
 	}
 	function previous() {
 		i--
 		offsetX += nodesOverallWidth[i < 0 ? len + i : i]
-		target.style.transition = '0.5s'
+		target.style.transitionDuration = transition + 's'
+		target.style.transitionProperty = 'all'
 		target.style.transform = `translateX(${offsetX}px)`
 	}
 	let _id = undefined
@@ -81,6 +89,141 @@ export function Slide(itemList, target) {
 	}
 }
 
-export function Focus(){
-	
+/**
+ * @typedef {Object} FocusObj
+ * @property {function(number=)} infinity - 無限撥放下一張，間隔秒數(毫秒)，預設為5000毫秒
+ * @property {function} stop - 停止撥放
+ * @property {function(number|Element)} index - 跳轉到索引位置(數字 | 元素)
+ * @property {function} next - 撥放下一張
+ * @property {function} prev - 撥放上一張
+ * @property {function} active - 目前元素
+ * @property {function(number=)} zIndex - 設置z-index延遲(毫秒)，預設為400毫秒
+ */
+/**
+ * 切換聚焦的輪播圖，``itemList``最少三個
+ * @param {NodeList} itemList 輪播圖的物品列
+ * @param {Element} target 存放物品列的目標元素
+ * @param {number} transition 過渡時間(秒)，優先級: 參數 > 最終樣式 > 默認值 = 0.5
+ * @returns {FocusObj} 可調用 infinity()、stop()、index()、next()、prev()、active()、zIndex()
+ */
+export function Focus(itemList, target, transition = null) {
+	const _t = parseInt(
+		getComputedStyle(itemList[0]).transitionDuration.replace('s', '')
+	)
+	transition = transition || _t ? _t : 0.5
+
+	const len = itemList.length
+	const width = target.clientWidth
+	let i = 0
+
+	for (const [key, item] of itemList.entries()) {
+		item.style.transitionDuration = transition + 's'
+		item.style.transitionProperty = 'transform, scale'
+		item.style.zIndex = !key ? '1' : '-2'
+		zoomOut(item, true)
+	}
+
+	zoomIn(itemList[i])
+	zoomOut(itemList[i + 1], false)
+	zIndex()
+
+	function zoomIn(item) {
+		item.style.scale = 1
+		item.style.transform = `translateX(0)`
+	}
+	function zoomOut(item, isLeft = true) {
+		item.style.scale = 0.5
+		const w = width - item.offsetWidth * (1 / 2)
+		item.style.transform = `translateX(${isLeft ? -w : w}px)`
+	}
+	function zIndex(delay = 400) {
+		const l = i - 1 < 0 ? len - 1 : i - 1
+		const r = i + 1 >= len ? 0 : i + 1
+		const ll = l - 1 < 0 ? len - 1 : l - 1
+		const rr = r + 1 >= len ? 0 : r + 1
+
+		setTimeout(() => {
+			itemList[i].style.zIndex = '1'
+		}, transition * (delay / 2))
+		setTimeout(() => {
+			itemList[ll].style.zIndex = '-1'
+			itemList[rr].style.zIndex = '-1'
+
+			itemList[i].style.zIndex = '1'
+			itemList[l].style.zIndex = '0'
+			itemList[r].style.zIndex = '0'
+		}, transition * delay)
+	}
+
+	/**
+	 * @param {(number|Element)} index
+	 */
+	function index(index) {
+		if (typeof index === 'number') {
+			i = index
+		} else {
+			for (const [key, item] of itemList.entries()) {
+				if (item === index) i = key
+			}
+		}
+
+		const l = i - 1 < 0 ? len - 1 : i - 1
+		const r = i + 1 >= len ? 0 : i + 1
+
+		zoomOut(itemList[l], true)
+		zoomIn(itemList[i])
+		zoomOut(itemList[r], false)
+		zIndex()
+	}
+	function next() {
+		i++
+
+		i = i >= len ? 0 : i
+		const l = i - 1 < 0 ? len - 1 : i - 1
+		const r = i + 1 >= len ? 0 : i + 1
+
+		zoomOut(itemList[l], true)
+		zoomIn(itemList[i])
+		zoomOut(itemList[r], false)
+		zIndex()
+	}
+	function previous() {
+		i--
+
+		i = i < 0 ? len - 1 : i
+		const l = i - 1 < 0 ? len - 1 : i - 1
+		const r = i + 1 >= len ? 0 : i + 1
+
+		zoomOut(itemList[l], true)
+		zoomIn(itemList[i])
+		zoomOut(itemList[r], false)
+		zIndex()
+	}
+	let _id = undefined
+	/**
+	 * @param {number} sec 間隔秒數(毫秒)
+	 */
+	function infinity(sec = 5000) {
+		if (_id) return
+
+		_id = setInterval(() => {
+			next()
+		}, sec)
+	}
+	function active(){
+		return itemList[i]
+	}
+
+	return {
+		infinity: infinity,
+		stop: () => {
+			clearInterval(_id)
+			_id = undefined
+		},
+		index: index,
+		next: next,
+		prev: previous,
+		active: active,
+		zIndex: zIndex,
+	}
 }

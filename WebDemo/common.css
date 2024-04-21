@@ -1,5 +1,4 @@
-:root {
-}
+:root {}
 @media screen and (max-width: 480px) {
     :root {
         --rwd-width: 90%;
@@ -36,6 +35,9 @@
     padding: 0;
     box-sizing: border-box;
     list-style: none;
+}
+img {
+    vertical-align: middle;
 }
 
 /* 排版 */
