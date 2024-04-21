@@ -210,7 +210,7 @@ export function Focus(itemList, target, transition = null) {
 			next()
 		}, sec)
 	}
-	function active(){
+	function active() {
 		return itemList[i]
 	}
 
@@ -225,5 +225,91 @@ export function Focus(itemList, target, transition = null) {
 		prev: previous,
 		active: active,
 		zIndex: zIndex,
+	}
+}
+
+/**
+ * @typedef {Object} FadeObj
+ * @property {function(number=)} infinity - 無限撥放下一張，間隔秒數(毫秒)，預設為5000毫秒
+ * @property {function} stop - 停止撥放
+ * @property {function(number)} index - 跳轉到索引位置(數字)
+ * @property {function} next - 撥放下一張
+ * @property {function} prev - 撥放上一張
+ */
+/**
+ * 淡入淡出的輪播圖，最後一個會第一張顯示，
+ * @param {NodeList} itemList 輪播圖的物品列
+ * @param {Element} target 存放物品列的目標元素
+ * @param {number} transition 過渡時間(秒)，優先級: 參數 > 最終樣式 > 默認值 = 1
+ * @returns {FadeObj} 可調用 infinity()、stop()、index()、next()、prev()
+ * @returns
+ */
+export function Fade(itemList, target, transition = null) {
+	const _t = parseInt(
+		getComputedStyle(itemList[0]).transitionDuration.replace('s', '')
+	)
+	transition = transition || _t ? _t : 1
+
+	const len = itemList.length
+	let i = len - 1
+
+	for (const [key, item] of itemList.entries()) {
+		item.style.transitionDuration = transition + 's'
+		item.style.transitionProperty = 'opacity'
+		if (key === len - 1) fadeIn(item)
+		else fadeOut(item)
+	}
+
+	function fadeIn(item) {
+		item.style.pointerEvents = 'auto'
+		item.style.opacity = '1'
+	}
+	function fadeOut(item) {
+		item.style.opacity = '0'
+		item.style.pointerEvents = 'none'
+	}
+
+	function index(index) {
+		fadeOut(itemList[i])
+		i = index
+		fadeIn(itemList[i])
+	}
+	function next() {
+		console.log(1)
+		fadeOut(itemList[i])
+		i++
+		i = i >= len ? 0 : i
+		const l = i - 1 < 0 ? len - 1 : i - 1
+		const r = i + 1 >= len ? 0 : i + 1
+		fadeIn(itemList[i])
+	}
+	function prev() {
+		fadeOut(itemList[i])
+		i--
+		i = i < 0 ? len - 1 : i
+		const l = i - 1 < 0 ? len - 1 : i - 1
+		const r = i + 1 >= len ? 0 : i + 1
+		fadeIn(itemList[i])
+	}
+	let _id = undefined
+	/**
+	 * @param {number} sec 間隔秒數(毫秒)
+	 */
+	function infinity(sec = 5000) {
+		// 	if (_id) return
+		// 	_id = setInterval(() => {
+		// 		next()
+		// 	}, sec)
+	}
+
+	return {
+		infinity: infinity,
+		stop: () => {
+			clearInterval(_id)
+			_id = undefined
+		},
+		next: next,
+		prev: prev,
+		index: index,
 	}
 }

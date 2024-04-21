@@ -1,4 +1,4 @@
-import { Slide, Focus } from './Carousel/Carousel.js'
+import { Slide, Focus, Fade } from './Carousel/Carousel.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -298,6 +298,12 @@ function Init() {
 			next: canvas.querySelector('.next'),
 			prev: canvas.querySelector('.prev'),
 		},
+		scroll: {
+			ul: scroll.querySelector('ul'),
+			li: scroll.querySelectorAll('li'),
+			next: scroll.querySelector('.next'),
+			prev: scroll.querySelector('.prev'),
+		},
 	}
 	;(async () => {
 		const res = await fetch('./exhibit.json')
@@ -305,6 +311,7 @@ function Init() {
 
 		GameInit(data.Game, DOM.game)
 		CanvasInit(data.Canvas, DOM.canvas)
+		ScrollInit(data.Scroll, DOM.scroll)
 	})()
 }
 function CoverInit() {
@@ -556,6 +563,54 @@ function CanvasInit(data, dom) {
 		}
 		function linkTo() {
 			location = `./Canvas/${c}/`
+		}
+	}
+}
+function ScrollInit(data, dom) {
+	// 自動加入所有滾輪特效底下的作品到ul裡
+	const fragment = document.createDocumentFragment()
+	let _c = 0
+	for (const item in data) {
+		const li = document.createElement('li')
+		const img = document.createElement('img')
+		img.setAttribute('src', `./Images/Scroll_${item}_0.gif`)
+		li.append(img)
+		li.setAttribute('data-scroll', item)
+		fragment.append(li)
+		_c++
+	}
+	for (let i = 0; i < Math.min(_c, dom.li.length); i++) {
+		dom.li[i].remove()
+	}
+	dom.ul.append(fragment)
+	dom.li = dom.ul.querySelectorAll('li') // 更新li
+
+	// 輪播圖模組
+	const fade = Fade(dom.li, dom.ul)
+	dom.li = dom.ul.querySelectorAll('li') // 更新li
+	fade.infinity()
+	dom.next.onclick = () => {
+		fade.next()
+	}
+	dom.prev.onclick = () => {
+		fade.prev()
+	}
+	// 描述
+	for (const item of dom.li) {
+		const s = item.getAttribute('data-scroll')
+		item.onmouseenter = () => {
+			fade.stop()
+		}
+		item.onmouseleave = () => {
+			fade.infinity()
+		}
+		item.querySelector('img').onerror = function () {
+			this.src = './assets/laptop-code-solid.svg'
+		}
+		if (s) {
+			item.onclick = () => {
+				location = `./Scroll/${s}/`
+			}
 		}
 	}
 }

@@ -9,7 +9,7 @@
     -   **Minesweeper** : 踩地雷
 -   **Canvas** : Canvas
     -   **Fireworks** : 煙火特效
--   **Scrolling Effect** : 滑鼠滾動特效
+-   **Scroll** : 滑鼠滾動特效
     -   **Animation** : 動畫版
     -   **Mandatory** : 投影片版
 -   **Menu** : 菜單動畫
@@ -56,7 +56,7 @@
 
 #### 滑鼠滾動特效(動畫)
 
-![滑鼠滾動特效0](Images/Scrolling_Effect_0.gif '滑鼠滾動特效')
+![滑鼠滾動特效0](Images/Scroll_Animation_0.gif '滑鼠滾動特效')
 
 > 滑鼠滾輪滾到哪，動畫效果就播到哪
 
