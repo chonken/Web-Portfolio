@@ -55,7 +55,6 @@ section img {
     cursor: pointer;
 }
 .carousel .prev {
-    content: '';
     position: absolute;
     top: calc(50% - 20px);
     left: -20px;
@@ -65,7 +64,6 @@ section img {
     border: 1px solid red;
 }
 .carousel .next {
-    content: '';
     position: absolute;
     top: calc(50% - 20px);
     right: -20px;
@@ -119,7 +117,7 @@ canvas {
 }
 @media screen and (max-width: 1024px) {
     .game li {
-        min-width: 33.3%;
+        min-width: 33.33%;
     }
 }
 @media screen and (max-width: 768px) {
@@ -193,29 +191,30 @@ canvas {
     border: 1px solid red;
 }
 .scroll ul {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16/9;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.scroll .wrape {
+    min-width: 33.33%;
 }
 .scroll li {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     aspect-ratio: 16/9;
-    background-color: white;
+}
+.scroll .content {
+    padding-bottom: 80px;
 }
 .scroll .carousel .prev {
-    top: 45%;
-    left: 0;
-    width: auto;
-    height: 15%;
+    top: auto;
+    bottom: -80px;
+    left: calc(50% - 100px);
+    width: 60px;
 }
 .scroll .carousel .next {
-    top: 45%;
-    right: 0;
-    width: auto;
-    height: 15%;
+    top: auto;
+    bottom: -80px;
+    right: calc(50% - 100px);
+    width: 60px;
 }
 
 /* menu */
@@ -235,7 +234,7 @@ canvas {
     flex-wrap: nowrap;
 }
 #carousel li {
-    min-width: 33.3%;
+    min-width: 33.33%;
     aspect-ratio: 1/1;
 }
 @media screen and (max-width: 480px) {
@@ -255,27 +254,53 @@ canvas {
     border: 1px solid red;
 }
 .web ul {
-    display: flex;
-    flex-wrap: nowrap;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
 }
 .web li {
-    min-width: 33.33%;
-    aspect-ratio: 16/18;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-color: white;
 }
-.web .content {
-    padding-bottom: 80px;
+.web iframe {
+    position: absolute;
+    top: -25%;
+    left: -25%;
+    width: 150%;
+    height: 150%;
+    scale: calc(1/1.5);
+    border: none;
+    transition: all 0.5s;
 }
 .web .carousel .prev {
-    top: auto;
-    bottom: -80px;
-    left: calc(50% - 100px);
-    width: 60px;
+    top: 45%;
+    left: 0;
+    width: auto;
+    height: 15%;
 }
 .web .carousel .next {
-    top: auto;
-    bottom: -80px;
-    right: calc(50% - 100px);
-    width: 60px;
+    top: 45%;
+    right: 0;
+    width: auto;
+    height: 15%;
+}.web .carousel .goto {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 15%;
+    aspect-ratio: 1/1;
+    border: 1px solid red;
+}.web .carousel .zoom {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 15%;
+    aspect-ratio: 1/1;
+    border: 1px solid red;
 }
 
 /* 1280up */

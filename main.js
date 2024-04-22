@@ -1,4 +1,4 @@
-import { Slide, Focus, Fade } from './Carousel/Carousel.js'
+import { Slide, Focus, Fade, Gallery } from './Carousel/Carousel.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -299,10 +299,19 @@ function Init() {
 			prev: canvas.querySelector('.prev'),
 		},
 		scroll: {
+			self: scroll,
 			ul: scroll.querySelector('ul'),
 			li: scroll.querySelectorAll('li'),
 			next: scroll.querySelector('.next'),
 			prev: scroll.querySelector('.prev'),
+		},
+		web: {
+			ul: web.querySelector('ul'),
+			li: web.querySelectorAll('li'),
+			next: web.querySelector('.next'),
+			prev: web.querySelector('.prev'),
+			goto: web.querySelector('.goto'),
+			zoom: web.querySelector('.zoom'),
 		},
 	}
 	;(async () => {
@@ -312,6 +321,7 @@ function Init() {
 		GameInit(data.Game, DOM.game)
 		CanvasInit(data.Canvas, DOM.canvas)
 		ScrollInit(data.Scroll, DOM.scroll)
+		WebDemo(data.WebDemo, DOM.web)
 	})()
 }
 function CoverInit() {
@@ -490,10 +500,10 @@ function GameInit(data, dom) {
 	}
 	// 描述
 	for (const item of dom.li) {
-		const g = item.getAttribute('data-game')
+		const d = item.getAttribute('data-game')
 		item.onmouseenter = () => {
 			dom.des.style.opacity = '1'
-			dom.des.textContent = g ? data[g].des : '尚未開發'
+			dom.des.textContent = d ? data[d].des : '尚未開發'
 			slide.stop()
 		}
 		item.onmouseleave = () => {
@@ -504,9 +514,9 @@ function GameInit(data, dom) {
 		item.querySelector('img').onerror = function () {
 			this.src = './assets/laptop-code-solid.svg'
 		}
-		if (g) {
+		if (d) {
 			item.onclick = () => {
-				location = `./Game/${g}/`
+				location = `./Game/${d}/`
 			}
 		}
 	}
@@ -545,12 +555,11 @@ function CanvasInit(data, dom) {
 	dom.prev.onclick = () => {
 		focus.prev()
 	}
-
 	for (const item of dom.li) {
-		const c = item.getAttribute('data-canvas')
+		const d = item.getAttribute('data-canvas')
 		item.onmouseenter = () => {
 			focus.stop()
-			if (c && focus.active() === item) {
+			if (d && focus.active() === item) {
 				item.addEventListener('click', linkTo)
 			}
 		}
@@ -562,7 +571,7 @@ function CanvasInit(data, dom) {
 			this.src = './assets/laptop-code-solid.svg'
 		}
 		function linkTo() {
-			location = `./Canvas/${c}/`
+			location = `./Canvas/${d}/`
 		}
 	}
 }
@@ -586,8 +595,59 @@ function ScrollInit(data, dom) {
 	dom.li = dom.ul.querySelectorAll('li') // 更新li
 
 	// 輪播圖模組
-	const fade = Fade(dom.li, dom.ul)
+	const gallery = Gallery(dom.li, 2, dom.ul)
+	gallery.infinity()
+	dom.next.onclick = () => {
+		gallery.next()
+	}
+	dom.prev.onclick = () => {
+		gallery.prev()
+	}
+	dom.ul = dom.self.querySelector('ul') // 更新ul
 	dom.li = dom.ul.querySelectorAll('li') // 更新li
+	for (const item of dom.li) {
+		const d = item.getAttribute('data-scroll')
+		item.onmouseenter = () => {
+			gallery.stop()
+		}
+		item.onmouseleave = () => {
+			gallery.infinity()
+		}
+		item.querySelector('img').onerror = function () {
+			this.src = './assets/laptop-code-solid.svg'
+		}
+		if (d) {
+			item.onclick = () => {
+				location = `./Scroll/${d}/`
+			}
+		}
+	}
+}
+
+function WebDemo(data, dom) {
+	// 自動加入所有復刻網頁底下的作品到ul裡
+	const fragment = document.createDocumentFragment()
+	let _c = 0
+	for (const item in data) {
+		const li = document.createElement('li')
+		li.classList.add('scroll')
+		const iframe = document.createElement('iframe')
+		iframe.setAttribute('src', './WebDemo/Demo1')
+		// iframe.width = 1280
+		iframe.height = 720
+		li.append(iframe)
+		li.setAttribute('data-web', item)
+		fragment.append(li)
+		_c++
+	}
+	for (let i = 0; i < Math.min(_c, dom.li.length); i++) {
+		dom.li[i].remove()
+	}
+	dom.ul.append(fragment)
+	dom.li = dom.ul.querySelectorAll('li') // 更新li
+
+	// 輪播圖模組
+	const fade = Fade(dom.li)
 	fade.infinity()
 	dom.next.onclick = () => {
 		fade.next()
@@ -595,22 +655,24 @@ function ScrollInit(data, dom) {
 	dom.prev.onclick = () => {
 		fade.prev()
 	}
-	// 描述
+	dom.goto.onclick = () => {
+		const d = fade.active().getAttribute('data-web')
+		if (d) {
+			location = `./WebDemo/${d}/`
+		}
+	}
+	dom.zoom.onclick = () => {
+		const iframe = fade.active().querySelector('iframe')
+		iframe.classList.toggle('scale-reset')
+		iframe.classList.toggle('position-reset')
+		iframe.classList.toggle('fill-height')
+	}
 	for (const item of dom.li) {
-		const s = item.getAttribute('data-scroll')
 		item.onmouseenter = () => {
 			fade.stop()
 		}
 		item.onmouseleave = () => {
 			fade.infinity()
-		}
-		item.querySelector('img').onerror = function () {
-			this.src = './assets/laptop-code-solid.svg'
-		}
-		if (s) {
-			item.onclick = () => {
-				location = `./Scroll/${s}/`
-			}
 		}
 	}
 }

@@ -4,13 +4,14 @@
  * @property {function} stop - 停止撥放
  * @property {function} next - 撥放下一張
  * @property {function} prev - 撥放上一張
+ * @property {function(number)} index - 跳轉到索引位置(數字)
  */
 /**
  * 平滑移動的輪播圖
  * @param {NodeList} itemList 輪播圖的物品列
  * @param {Element} target 存放物品列的目標元素
  * @param {number} transition 過渡時間(秒)，優先級: 參數 > 最終樣式 > 默認值 = 0.5
- * @returns {SlideObj} 可調用 infinity()、stop()、next()、prev()
+ * @returns {SlideObj} 可調用 infinity()、stop()、index()、next()、prev()
  */
 export function Slide(itemList, target, transition = null) {
 	const _t = parseInt(
@@ -21,12 +22,12 @@ export function Slide(itemList, target, transition = null) {
 	const fragmentBefore = document.createDocumentFragment()
 	const fragmentAfter = document.createDocumentFragment()
 	const len = itemList.length
-	let nodesOverallWidth = new Array(len).fill(0)
+	let nodesOverallWidth = []
 	let i = 0
 	let offsetX = 0
 	let initX = 0
 
-	nodesOverallWidth = nodesOverallWidth.map((_, i) => {
+	for (let i = 0; i < len; i++) {
 		const c = getComputedStyle(itemList[i])
 		const w = parseFloat(c.width.replace('px', ''))
 		const ml = parseFloat(c.marginLeft.replace('px', ''))
@@ -34,8 +35,8 @@ export function Slide(itemList, target, transition = null) {
 		const t = w + ml + mr
 
 		initX += t
-		return t
-	})
+		nodesOverallWidth.push(t)
+	}
 	target.style.left = -initX + 'px'
 	itemList.forEach((node) => {
 		fragmentBefore.append(node.cloneNode(true))
@@ -65,6 +66,16 @@ export function Slide(itemList, target, transition = null) {
 		target.style.transitionDuration = transition + 's'
 		target.style.transitionProperty = 'all'
 		target.style.transform = `translateX(${offsetX}px)`
+	}
+	function index(index) {
+		offsetX = 0
+		for (let i = 0; i < index; i++) {
+			nodesOverallWidth[i]
+		}
+		target.style.transitionDuration = transition + 's'
+		target.style.transitionProperty = 'all'
+		target.style.transform = `translateX(${offsetX}px)`
+		i = index
 	}
 	let _id = undefined
 	/**
@@ -97,7 +108,7 @@ export function Slide(itemList, target, transition = null) {
  * @property {function} next - 撥放下一張
  * @property {function} prev - 撥放上一張
  * @property {function} active - 目前元素
- * @property {function(number=)} zIndex - 設置z-index延遲(毫秒)，預設為400毫秒
+ * @property {function(number=)} delay - 設置z-index延遲(毫秒)，預設為400毫秒
  */
 /**
  * 切換聚焦的輪播圖，``itemList``最少三個
@@ -125,7 +136,7 @@ export function Focus(itemList, target, transition = null) {
 
 	zoomIn(itemList[i])
 	zoomOut(itemList[i + 1], false)
-	zIndex()
+	delay()
 
 	function zoomIn(item) {
 		item.style.scale = 1
@@ -136,7 +147,7 @@ export function Focus(itemList, target, transition = null) {
 		const w = width - item.offsetWidth * (1 / 2)
 		item.style.transform = `translateX(${isLeft ? -w : w}px)`
 	}
-	function zIndex(delay = 400) {
+	function delay(delay = 400) {
 		const l = i - 1 < 0 ? len - 1 : i - 1
 		const r = i + 1 >= len ? 0 : i + 1
 		const ll = l - 1 < 0 ? len - 1 : l - 1
@@ -173,7 +184,7 @@ export function Focus(itemList, target, transition = null) {
 		zoomOut(itemList[l], true)
 		zoomIn(itemList[i])
 		zoomOut(itemList[r], false)
-		zIndex()
+		delay()
 	}
 	function next() {
 		i++
@@ -185,7 +196,7 @@ export function Focus(itemList, target, transition = null) {
 		zoomOut(itemList[l], true)
 		zoomIn(itemList[i])
 		zoomOut(itemList[r], false)
-		zIndex()
+		delay()
 	}
 	function previous() {
 		i--
@@ -197,7 +208,7 @@ export function Focus(itemList, target, transition = null) {
 		zoomOut(itemList[l], true)
 		zoomIn(itemList[i])
 		zoomOut(itemList[r], false)
-		zIndex()
+		delay()
 	}
 	let _id = undefined
 	/**
@@ -224,7 +235,7 @@ export function Focus(itemList, target, transition = null) {
 		next: next,
 		prev: previous,
 		active: active,
-		zIndex: zIndex,
+		delay: delay,
 	}
 }
 
@@ -233,6 +244,7 @@ export function Focus(itemList, target, transition = null) {
  * @property {function(number=)} infinity - 無限撥放下一張，間隔秒數(毫秒)，預設為5000毫秒
  * @property {function} stop - 停止撥放
  * @property {function(number)} index - 跳轉到索引位置(數字)
+ * @property {function} active - 回傳目前索引的元素
  * @property {function} next - 撥放下一張
  * @property {function} prev - 撥放上一張
  */
@@ -241,10 +253,9 @@ export function Focus(itemList, target, transition = null) {
  * @param {NodeList} itemList 輪播圖的物品列
  * @param {Element} target 存放物品列的目標元素
  * @param {number} transition 過渡時間(秒)，優先級: 參數 > 最終樣式 > 默認值 = 1
- * @returns {FadeObj} 可調用 infinity()、stop()、index()、next()、prev()
- * @returns
+ * @returns {FadeObj} 可調用 infinity()、stop()、index()、next()、prev()、active()
  */
-export function Fade(itemList, target, transition = null) {
+export function Fade(itemList, transition = null) {
 	const _t = parseInt(
 		getComputedStyle(itemList[0]).transitionDuration.replace('s', '')
 	)
@@ -273,6 +284,9 @@ export function Fade(itemList, target, transition = null) {
 		fadeOut(itemList[i])
 		i = index
 		fadeIn(itemList[i])
+	}
+	function active(){
+		return itemList[i]
 	}
 	function next() {
 		console.log(1)
@@ -310,6 +324,142 @@ export function Fade(itemList, target, transition = null) {
 		},
 		next: next,
 		prev: prev,
+		index: index,
+		active: active,
+	}
+}
+
+/**
+ * @typedef {Object} GalleryObj
+ * @property {function(number=)} infinity - 無限撥放下一張，間隔秒數(毫秒)，預設為5000毫秒
+ * @property {function} stop - 停止撥放
+ * @property {function(number)} index - 跳轉到索引位置(數字)
+ * @property {function} next - 撥放下一張
+ * @property {function} prev - 撥放上一張
+ */
+/**
+ * 像畫廊一樣的輪播圖，垂直的物品會被包在.wrpae裡，控制.wrape寬度以適應版面所需，可設置垂直物品的數量控制高度
+ * @param {NodeList} itemList 輪播圖的物品列，將會被重新包裝
+ * @param {number} verticle 垂直物品的數量
+ * @param {Element} target 存放物品列的目標元素，將會被替換成新的元素
+ * @param {number} transition 過渡時間(秒)，優先級: 參數 > 最終樣式 > 默認值 = 0.5
+ * @returns {GalleryObj} 可調用 infinity()、stop()、index()、next()、prev()
+ */
+export function Gallery(itemList, verticle, target, transition = null) {
+	const _t = parseInt(
+		getComputedStyle(itemList[0]).transitionDuration.replace('s', '')
+	)
+	transition = transition || _t ? _t : 0.5
+
+	// 重新編排元素結構
+	const newTarget = target.cloneNode(false)
+	const fragmentF = document.createDocumentFragment()
+	const fragmentS = document.createDocumentFragment()
+	const fragmentT = document.createDocumentFragment()
+	let wrapeF = document.createElement('div')
+	let wrapeS = document.createElement('div')
+	let wrapeT = document.createElement('div')
+	_wrpe(wrapeF)
+	_wrpe(wrapeS)
+	_wrpe(wrapeT)
+	for (const [key, item] of itemList.entries()) {
+		wrapeF.appendChild(item)
+		wrapeS.appendChild(item.cloneNode(true))
+		wrapeT.appendChild(item.cloneNode(true))
+
+		if ((key + 1) % verticle === 0) {
+			fragmentF.appendChild(wrapeF)
+			fragmentS.appendChild(wrapeS)
+			fragmentT.appendChild(wrapeT)
+
+			wrapeF = document.createElement('div')
+			wrapeS = document.createElement('div')
+			wrapeT = document.createElement('div')
+			_wrpe(wrapeF)
+			_wrpe(wrapeS)
+			_wrpe(wrapeT)
+		}
+	}
+	function _wrpe(wrpe) {
+		wrpe.classList.add('wrape')
+	}
+	newTarget.appendChild(fragmentF)
+	newTarget.appendChild(fragmentS)
+	newTarget.appendChild(fragmentT)
+	target.parentNode.replaceChild(newTarget, target)
+
+	// 輪播
+	const wrapes = newTarget.querySelectorAll('.wrape')
+	const len = wrapes.length / 3
+	let nodesOverallWidth = []
+	let i = 0
+	let offsetX = 0
+	let initX = 0
+
+	for (let i = 0; i < len; i++) {
+		const c = getComputedStyle(wrapes[i])
+		const w = parseFloat(c.width.replace('px', ''))
+		const ml = parseFloat(c.marginLeft.replace('px', ''))
+		const mr = parseFloat(c.marginRight.replace('px', ''))
+		const t = w + ml + mr
+
+		initX += t
+		nodesOverallWidth.push(t)
+	}
+	newTarget.style.left = -initX + 'px'
+	newTarget.ontransitionend = function () {
+		if (Math.abs(i) >= len) {
+			newTarget.style.transition = '0s'
+			newTarget.style.transform = `translateX(0px)`
+			offsetX = 0
+			i = 0
+		}
+	}
+
+	function next() {
+		offsetX -= nodesOverallWidth[i < 0 ? len + i : i]
+		newTarget.style.transitionDuration = transition + 's'
+		newTarget.style.transitionProperty = 'all'
+		newTarget.style.transform = `translateX(${offsetX}px)`
+		i++
+	}
+	function previous() {
+		i--
+		offsetX += nodesOverallWidth[i < 0 ? len + i : i]
+		newTarget.style.transitionDuration = transition + 's'
+		newTarget.style.transitionProperty = 'all'
+		newTarget.style.transform = `translateX(${offsetX}px)`
+	}
+	function index(index) {
+		offsetX = 0
+		for(let i = 0; i < index; i++){
+			nodesOverallWidth[i]
+		}
+		newTarget.style.transitionDuration = transition + 's'
+		newTarget.style.transitionProperty = 'all'
+		newTarget.style.transform = `translateX(${offsetX}px)`
+		i = index
+	}
+	let _id = undefined
+	/**
+	 * @param {number} sec 間隔秒數(毫秒)
+	 */
+	function infinity(sec = 5000) {
+		if (_id) return
+
+		_id = setInterval(() => {
+			next()
+		}, sec)
+	}
+
+	return {
+		infinity: infinity,
+		stop: () => {
+			clearInterval(_id)
+			_id = undefined
+		},
+		next: next,
+		prev: previous,
 		index: index,
 	}
 }
