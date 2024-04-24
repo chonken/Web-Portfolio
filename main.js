@@ -363,12 +363,12 @@ function CoverInit() {
 		element.onclick = () => {
 			location = '#' + element.id.slice(1)
 		}
-		element.onmouseenter = () => {
-			graph.align(element.id, goSidePoint)
-		}
-		element.onmouseleave = () => {
-			graph.random()
-		}
+		// element.onmouseenter = () => {
+		// 	graph.align(element.id, goSidePoint)
+		// }
+		// element.onmouseleave = () => {
+		// 	graph.random()
+		// }
 	})
 }
 function CoverElemAni() {
@@ -615,7 +615,6 @@ function ScrollInit(data, dom) {
 		}
 	})
 	Animation(window, dom.mandatory, (percent) => {
-		console.log(percent)
 		const r = Math.round((255 * percent) / 100)
 		const g = Math.round((255 * percent) / 100)
 		const b = Math.round((255 * percent) / 100)
@@ -839,3 +838,24 @@ function WebDemo(data, dom) {
 // web.onclick = () => {
 // 	window.location = './WebDemo/Demo1/'
 // }
+// 暫時展示用
+document.getElementById('_game').onmouseenter = () => {
+	graph.align('go', goSidePoint)
+}
+document.getElementById('_game').onmouseleave = () => {
+	graph.random()
+}
+document.getElementById('_scroll').onmouseenter = () => {
+	graph.overflow('arroundY')
+	graph.changeSpeedY(-100)
+}
+document.getElementById('_scroll').onmouseleave = () => {
+	graph.overflow('rebound')
+	graph.recoverySpeed()
+}
+document.getElementById('_menu').onmouseenter = () => {
+	graph.align('menu', menuSidePoint)
+}
+document.getElementById('_menu').onmouseleave = () => {
+	graph.random()
+}

@@ -1,6 +1,7 @@
 # 網頁作品集
 
 盡量用純 HTML、CSS、Javascript 做出現階段自己能做出的效果
+歡迎直接參觀 [Github Pages](https://chonken.github.io/Web-Portfolio/)
 
 ## 目錄
 
@@ -9,11 +10,21 @@
     -   **Minesweeper** : 踩地雷
 -   **Canvas** : Canvas
     -   **Fireworks** : 煙火特效
+    -   **ParticleEffect** : 粒子特效(未完成)
 -   **Scroll** : 滑鼠滾動特效
-    -   **Animation** : 動畫版
-    -   **Mandatory** : 投影片版
--   **Menu** : 菜單動畫
-    -   **Surround** : 環繞版
+    -   **Animation** : 動畫
+    -   **Mandatory** : 滾動吸附
+    -   **Horizon** : 水平滾動(待開發)
+-   **Animation** : CSS 動畫(待開發)
+-   **Menu** : 選單動畫
+    -   **Surround** : 環繞
+    -   **Honeycomb** : 六邊形佈局(未完成)
+-   **Carousel** : 輪播圖(未完成)
+    -   **Fade** : 淡入淡出(未完成)
+    -   **Focus** : 聚焦切換(未完成)
+    -   **Gallery** : 類似畫廊(未完成)
+    -   **Slide** : 平滑移動(未完成)
+    -   **ThreeD** : 3D移動(待開發)
 -   **WebDemo** : 網頁展示
 
 ## 展示
@@ -60,7 +71,7 @@
 
 > 滑鼠滾輪滾到哪，動畫效果就播到哪
 
-#### 滑鼠滾動特效(投影片)
+#### 滑鼠滾動特效(滾動吸附)
 
 > 設定滾動吸附方式即可，scroll-snap-type: (x || y) mandatory;
 
