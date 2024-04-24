@@ -565,11 +565,6 @@ function CanvasInit(data, dom) {
 
 	const focus = Focus(dom.li, dom.ul)
 	focus.infinity()
-	for (const li of dom.li) {
-		li.onclick = function () {
-			focus.index(this)
-		}
-	}
 	dom.next.onclick = () => {
 		focus.next()
 	}
@@ -578,21 +573,19 @@ function CanvasInit(data, dom) {
 	}
 	for (const item of dom.li) {
 		const d = item.getAttribute('data-canvas')
+
+		item.addEventListener('click', function () {
+			if (d && focus.active() === item) location = `./Canvas/${d}/`
+			else focus.index(this)
+		})
 		item.onmouseenter = () => {
 			focus.stop()
-			if (d && focus.active() === item) {
-				item.addEventListener('click', linkTo)
-			}
 		}
 		item.onmouseleave = () => {
-			item.removeEventListener('click', linkTo)
 			focus.infinity()
 		}
 		item.querySelector('img').onerror = function () {
 			this.src = './assets/laptop-code-solid.svg'
-		}
-		function linkTo() {
-			location = `./Canvas/${d}/`
 		}
 	}
 }
