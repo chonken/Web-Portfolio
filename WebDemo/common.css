@@ -46,7 +46,7 @@ img {
     margin-left: auto;
     margin-right: auto;
 }
-.scroll {
+.scroll-auto {
     overflow: auto !important;
 }
 .hidden {

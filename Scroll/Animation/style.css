@@ -1,3 +1,6 @@
+/* !!! */
+/* 使用 sticky 時，父層容器如果有使用 overflow 的 hidden,scroll,auto,或 overlay 等屬性值，都會阻礙 sticky 效果 */
+/* !!! */
 * {
     margin: 0;
     padding: 0;

@@ -1,5 +1,6 @@
 import { Slide, Focus, Fade, Gallery } from './Carousel/Carousel.js'
 import { Honeycomb } from './Menu/Menu.js'
+import { Animation } from './Scroll/Scroll.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -300,7 +301,12 @@ function Init() {
 			next: canvas.querySelector('.next'),
 			prev: canvas.querySelector('.prev'),
 		},
-		scroll: {},
+		scroll: {
+			self: scroll,
+			banner: scroll.querySelector('.scroll-banner'),
+			animation: scroll.querySelector('.scroll-animation'),
+			mandatory: scroll.querySelector('.scroll-mandatory'),
+		},
 		animation: {
 			self: animation,
 			ul: animation.querySelector('ul'),
@@ -331,7 +337,7 @@ function Init() {
 		GameInit(data.Game, DOM.game)
 		CanvasInit(data.Canvas, DOM.canvas)
 		ScrollInit(data.Scroll, DOM.scroll)
-		Animation(data.Animation, DOM.animation)
+		AnimationInit(data.Animation, DOM.animation)
 		Menu(data.Menu, DOM.menu)
 		WebDemo(data.WebDemo, DOM.web)
 	})()
@@ -590,8 +596,33 @@ function CanvasInit(data, dom) {
 		}
 	}
 }
-function ScrollInit(data, dom) {}
-function Animation(data, dom) {
+function ScrollInit(data, dom) {
+	Animation(window, dom.banner, (percent) => {
+		const r = Math.round(255 - (255 * percent) / 100)
+		const g = Math.round(255 - (255 * percent) / 100)
+		const b = Math.round(255 - (255 * percent) / 100)
+		dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
+
+		const title = dom.banner.querySelector('.title')
+		title.style.transform = `translateX(-${percent}%)`
+	})
+	Animation(window, dom.animation, (percent) => {
+		const test = dom.animation.querySelector('.test')
+		if (percent <= 50) {
+			test.style.transform = `translate(0,-${percent}%)`
+		} else {
+			test.style.transform = `translate(${(50 - percent) * 2}%,-50%)`
+		}
+	})
+	Animation(window, dom.mandatory, (percent) => {
+		console.log(percent)
+		const r = Math.round((255 * percent) / 100)
+		const g = Math.round((255 * percent) / 100)
+		const b = Math.round((255 * percent) / 100)
+		dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
+	})
+}
+function AnimationInit(data, dom) {
 	// 自動加入所有CSS動畫底下的作品到ul裡
 	const fragment = document.createDocumentFragment()
 	let _c = 0
