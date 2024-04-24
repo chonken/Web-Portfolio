@@ -1,4 +1,5 @@
 import { Slide, Focus, Fade, Gallery } from './Carousel/Carousel.js'
+import { Honeycomb } from './Menu/Menu.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -8,6 +9,7 @@ const cards = document.querySelectorAll('.card')
 const game = document.getElementById('game')
 const canvas = document.getElementById('canvas')
 const scroll = document.getElementById('scroll')
+const animation = document.getElementById('animation')
 const menu = document.getElementById('menu')
 const carousel = document.getElementById('carousel')
 const web = document.getElementById('web')
@@ -298,12 +300,20 @@ function Init() {
 			next: canvas.querySelector('.next'),
 			prev: canvas.querySelector('.prev'),
 		},
-		scroll: {
-			self: scroll,
-			ul: scroll.querySelector('ul'),
-			li: scroll.querySelectorAll('li'),
-			next: scroll.querySelector('.next'),
-			prev: scroll.querySelector('.prev'),
+		scroll: {},
+		animation: {
+			self: animation,
+			ul: animation.querySelector('ul'),
+			li: animation.querySelectorAll('li'),
+			next: animation.querySelector('.next'),
+			prev: animation.querySelector('.prev'),
+		},
+		menu: {
+			ul: menu.querySelector('ul'),
+			li: menu.querySelectorAll('li'),
+			next: menu.querySelector('.next'),
+			prev: menu.querySelector('.prev'),
+			des: menu.querySelector('.describe'),
 		},
 		web: {
 			ul: web.querySelector('ul'),
@@ -321,6 +331,8 @@ function Init() {
 		GameInit(data.Game, DOM.game)
 		CanvasInit(data.Canvas, DOM.canvas)
 		ScrollInit(data.Scroll, DOM.scroll)
+		Animation(data.Animation, DOM.animation)
+		Menu(data.Menu, DOM.menu)
 		WebDemo(data.WebDemo, DOM.web)
 	})()
 }
@@ -503,7 +515,10 @@ function GameInit(data, dom) {
 		const d = item.getAttribute('data-game')
 		item.onmouseenter = () => {
 			dom.des.style.opacity = '1'
-			dom.des.textContent = d ? data[d].des : '尚未開發'
+			dom.des.innerHTML = d
+				? `<strong style='font-size: 1.25rem;'>${data[d].name}：</strong>\n\n`
+				: ''
+			dom.des.innerHTML += d ? data[d].des : '尚未開發'
 			slide.stop()
 		}
 		item.onmouseleave = () => {
@@ -575,8 +590,9 @@ function CanvasInit(data, dom) {
 		}
 	}
 }
-function ScrollInit(data, dom) {
-	// 自動加入所有滾輪特效底下的作品到ul裡
+function ScrollInit(data, dom) {}
+function Animation(data, dom) {
+	// 自動加入所有CSS動畫底下的作品到ul裡
 	const fragment = document.createDocumentFragment()
 	let _c = 0
 	for (const item in data) {
@@ -584,7 +600,7 @@ function ScrollInit(data, dom) {
 		const img = document.createElement('img')
 		img.setAttribute('src', `./Images/Scroll_${item}_0.gif`)
 		li.append(img)
-		li.setAttribute('data-scroll', item)
+		li.setAttribute('data-animation', item)
 		fragment.append(li)
 		_c++
 	}
@@ -606,7 +622,7 @@ function ScrollInit(data, dom) {
 	dom.ul = dom.self.querySelector('ul') // 更新ul
 	dom.li = dom.ul.querySelectorAll('li') // 更新li
 	for (const item of dom.li) {
-		const d = item.getAttribute('data-scroll')
+		const d = item.getAttribute('data-animation')
 		item.onmouseenter = () => {
 			gallery.stop()
 		}
@@ -618,12 +634,64 @@ function ScrollInit(data, dom) {
 		}
 		if (d) {
 			item.onclick = () => {
-				location = `./Scroll/${d}/`
+				location = `./Animation/${d}/`
 			}
 		}
 	}
 }
+function Menu(data, dom) {
+	const fragment = document.createDocumentFragment()
+	let _c = 0
+	for (const item in data) {
+		const li = document.createElement('li')
+		const img = document.createElement('img')
+		img.setAttribute('src', `./Images/Menu_${item}_0.gif`)
+		li.append(img)
+		li.setAttribute('data-menu', item)
+		fragment.append(li)
+		_c++
+	}
+	for (let i = 0; i < Math.min(_c, dom.li.length); i++) {
+		dom.li[i].remove()
+	}
+	dom.ul.append(fragment)
+	dom.li = dom.ul.querySelectorAll('li') // 更新li
 
+	Honeycomb(dom.li, dom.ul)
+	// 描述
+	for (const item of dom.li) {
+		const d = item.getAttribute('data-menu')
+		item.addEventListener('mouseenter', function () {
+			const ul = document.createElement('ul')
+			let li = document.createElement('li')
+			const desList = data[d]?.des.split('、') || []
+			desList.map((w) => {
+				li = document.createElement('li')
+				li.textContent = w
+				ul.append(li)
+			})
+			dom.des.append(ul)
+			dom.des.opacity = 1
+			this.style.opacity = 1
+		})
+		item.addEventListener('mouseleave', function () {
+			const ul = dom.des.querySelectorAll('ul')
+			for (const u of ul) {
+				u.remove()
+			}
+			dom.des.opacity = 0
+			this.style.opacity = 0.75
+		})
+		item.querySelector('img').onerror = function () {
+			this.src = './assets/laptop-code-solid.svg'
+		}
+		if (d) {
+			item.onclick = () => {
+				location = `./Menu/${d}/`
+			}
+		}
+	}
+}
 function WebDemo(data, dom) {
 	// 自動加入所有復刻網頁底下的作品到ul裡
 	const fragment = document.createDocumentFragment()

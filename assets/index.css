@@ -1,3 +1,6 @@
+/* body::-webkit-scrollbar {
+    width: 0;
+} */
 /* 共用 */
 section {
     display: flex;
@@ -45,13 +48,13 @@ section img {
 .carousel {
     position: relative;
     /* overflow-x: hidden; */
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 .carousel ul {
     position: relative;
 }
 .carousel li {
-    border: 1px solid red;
+    outline: 1px solid red;
     cursor: pointer;
 }
 .carousel .prev {
@@ -61,7 +64,7 @@ section img {
     width: 40px;
     aspect-ratio: 1/1;
     cursor: pointer;
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 .carousel .next {
     position: absolute;
@@ -70,7 +73,7 @@ section img {
     width: 40px;
     aspect-ratio: 1/1;
     cursor: pointer;
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 canvas {
     display: block;
@@ -96,7 +99,7 @@ canvas {
 
 /* game */
 .game {
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 .game ul {
     display: flex;
@@ -107,12 +110,18 @@ canvas {
     min-width: 25%;
     aspect-ratio: 1/1;
 }
+.game .name {
+    margin: 20px;
+    padding: 0 25px;
+    width: fit-content;
+    outline: 1px solid red;
+}
 .game .describe {
     margin: 20px;
     padding: 25px;
     min-height: 150px;
     line-height: 1.5rem;
-    border: 1px solid red;
+    outline: 1px solid red;
     opacity: 0;
 }
 @media screen and (max-width: 1024px) {
@@ -147,7 +156,7 @@ canvas {
 
 /* canvas */
 .canvas {
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 .canvas ul {
     position: relative;
@@ -186,31 +195,31 @@ canvas {
     }
 }
 
-/* scroll */
-.scroll {
-    border: 1px solid red;
+/* animation */
+.animation {
+    outline: 1px solid red;
 }
-.scroll ul {
+.animation ul {
     display: flex;
     flex-wrap: nowrap;
 }
-.scroll .wrape {
+.animation .wrape {
     min-width: 33.33%;
 }
-.scroll li {
+.animation li {
     width: 100%;
     aspect-ratio: 16/9;
 }
-.scroll .content {
+.animation .content {
     padding-bottom: 80px;
 }
-.scroll .carousel .prev {
+.animation .carousel .prev {
     top: auto;
     bottom: -80px;
     left: calc(50% - 100px);
     width: 60px;
 }
-.scroll .carousel .next {
+.animation .carousel .next {
     top: auto;
     bottom: -80px;
     right: calc(50% - 100px);
@@ -219,15 +228,78 @@ canvas {
 
 /* menu */
 .menu {
-    border: 1px solid red;
+    outline: 1px solid red;
+}
+.menu .content {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    height: 80vh;
+    max-height: calc(100vh - 60px);
+}
+.menu .title {
+    flex-shrink: 0;
+}
+.menu .title h2 {
+    margin: 30px 0;
 }
 .menu .honeycomb {
-    border: 1px solid red;
+    outline: 1px solid red;
+    flex: 1;
+}
+.menu .honeycomb ul {
+    scale: 1;
+}
+.menu .honeycomb li {
+    background-color: goldenrod;
+    opacity: 0.75;
+}
+.menu .describe {
+    margin-left: 20px;
+    outline: 1px solid red;
+    flex: 1;
+}
+.menu .describe li {
+    margin: 10px;
+    list-style: disc;
+}
+@media screen and (max-width: 768px) {
+    .menu .content {
+        flex-direction: column;
+        width: 100%;
+    }
+    .menu .honeycomb {
+        flex: 1;
+        height: 0;
+    }
+    .menu .honeycomb li {
+        opacity: 1;
+    }
+    .menu .describe li {
+        display: none;
+    }
+}
+@media screen and (min-width: 769px) {
+    .menu .content {
+        width: 688px;
+    }
+    .menu .title {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        margin-right: 40px;
+        width: 180px;
+    }
+}
+@media screen and (min-width: 1025px) {
+    .menu .content {
+        width: 944px;
+    }
 }
 
 /* carousel */
 #carousel {
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 #carousel ul {
     display: flex;
@@ -251,7 +323,7 @@ canvas {
 
 /* web */
 .web {
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 .web ul {
     position: relative;
@@ -287,20 +359,24 @@ canvas {
     right: 0;
     width: auto;
     height: 15%;
-}.web .carousel .goto {
+}
+.web .carousel .goto {
     position: absolute;
     top: 0;
     right: 0;
     height: 15%;
     aspect-ratio: 1/1;
-    border: 1px solid red;
-}.web .carousel .zoom {
+    cursor: pointer;
+    outline: 1px solid red;
+}
+.web .carousel .zoom {
     position: absolute;
     bottom: 0;
     right: 0;
     height: 15%;
     aspect-ratio: 1/1;
-    border: 1px solid red;
+    cursor: pointer;
+    outline: 1px solid red;
 }
 
 /* 1280up */

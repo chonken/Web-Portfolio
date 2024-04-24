@@ -289,7 +289,6 @@ export function Fade(itemList, transition = null) {
 		return itemList[i]
 	}
 	function next() {
-		console.log(1)
 		fadeOut(itemList[i])
 		i++
 		i = i >= len ? 0 : i

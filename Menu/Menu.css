@@ -1,0 +1,32 @@
+.honeycomb ul {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    max-height: 100%;
+    scale: 0.9;
+    /* 暫定方案，未考慮完整蜂巢外的情況 */
+    aspect-ratio: 1/1;
+}
+.honeycomb .wrape {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    /* 暫定方案，未考慮完整蜂巢外的情況 */
+    margin-top: -6.25%;
+}
+.honeycomb .wrape:nth-child(1) {
+    margin-top: 0%;
+}
+.honeycomb li {
+    aspect-ratio: 1/1;
+    clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+}
+.honeycomb li img {
+    width: auto !important;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center;
+    cursor: pointer;
+}
