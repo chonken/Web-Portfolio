@@ -208,10 +208,24 @@ canvas {
 /* scroll */
 .scroll {
     /* 讓sticky正常使用 */
+    display: block;
     overflow: visible;
 }
 .scroll .screen {
     outline: 1px solid red;
+}
+.scroll .wrape {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    outline: 1px solid red;
+}
+.scroll .title {
+    margin: 0;
 }
 .scroll a {
     font-size: 2rem;
@@ -220,19 +234,7 @@ canvas {
     position: relative;
     height: 200vh;
 }
-.scroll .title-wrape {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    width: 100%;
-    height: 100vh;
-}
-.scroll h2 {
+.scroll .scroll-banner .title h2 {
     line-height: 30vh;
 }
 .scroll .scroll-banner a {
@@ -240,7 +242,17 @@ canvas {
 }
 .scroll .scroll-animation {
     position: relative;
-    height: 200vh;
+    height: 400vh;
+}
+.scroll .scroll-animation .title {
+    bottom: 100%;
+    display: flex;
+    justify-content: flex-end;
+    height: 25vh;
+    opacity: 0;
+}
+.scroll .scroll-animation .wrape {
+    transition: all 0.2s ease-out;
 }
 .scroll .scroll-animation a {
     color: white;
@@ -259,9 +271,6 @@ canvas {
 .scroll .scroll-mandatory {
     position: relative;
     height: 200vh;
-}
-.scroll .screen {
-    height: 100vh;
 }
 .scroll .scroll-mandatory a {
     color: black;

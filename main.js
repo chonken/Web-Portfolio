@@ -590,29 +590,45 @@ function CanvasInit(data, dom) {
 	}
 }
 function ScrollInit(data, dom) {
-	Animation(window, dom.banner, (percent) => {
-		const r = Math.round(255 - (255 * percent) / 100)
-		const g = Math.round(255 - (255 * percent) / 100)
-		const b = Math.round(255 - (255 * percent) / 100)
-		dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
+	Animation(window, dom.banner, {
+		start: 0,
+		duration: 'auto',
+		fn: (percent) => {
+			const r = Math.round(255 - (255 * percent) / 100)
+			const g = Math.round(255 - (255 * percent) / 100)
+			const b = Math.round(255 - (255 * percent) / 100)
+			dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
+			const title = dom.banner.querySelector('.title')
+			title.style.transform = `translateX(-${percent}%)`
+		},
+	})
+	Animation(window, dom.animation, {
+		start: 0,
+		duration: 'auto',
+		fn: (percent) => {
+			const title = dom.animation.querySelector('.title')
 
-		const title = dom.banner.querySelector('.title')
-		title.style.transform = `translateX(-${percent}%)`
+			if (percent <= 25) {
+				title.style.opacity = percent / 25
+				title.style.transform = `translateY(${percent * 4}%)`
+			} else {
+				title.style.opacity = 1
+				title.style.transform = `translateY(100%)`
+			}
+		},
 	})
-	Animation(window, dom.animation, (percent) => {
-		const test = dom.animation.querySelector('.test')
-		if (percent <= 50) {
-			test.style.transform = `translate(0,-${percent}%)`
-		} else {
-			test.style.transform = `translate(${(50 - percent) * 2}%,-50%)`
-		}
+	Animation(window, dom.mandatory, {
+		start: 0,
+		duration: 'auto',
+		fn: (percent) => {
+			const r = Math.round((255 * percent) / 100)
+			const g = Math.round((255 * percent) / 100)
+			const b = Math.round((255 * percent) / 100)
+			dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
+		},
 	})
-	Animation(window, dom.mandatory, (percent) => {
-		const r = Math.round((255 * percent) / 100)
-		const g = Math.round((255 * percent) / 100)
-		const b = Math.round((255 * percent) / 100)
-		dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
-	})
+	// Animation(window, dom.animation)
+	// Animation(window, dom.mandatory)
 }
 function AnimationInit(data, dom) {
 	// 自動加入所有CSS動畫底下的作品到ul裡
@@ -721,7 +737,7 @@ function WebDemo(data, dom) {
 	let _c = 0
 	for (const item in data) {
 		const li = document.createElement('li')
-		li.classList.add('scroll')
+		li.classList.add('scroll-auto')
 		const iframe = document.createElement('iframe')
 		iframe.setAttribute('src', './WebDemo/Demo1')
 		// iframe.width = 1280
