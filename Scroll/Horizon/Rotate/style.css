@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.horizon-by-rotate {
+    margin: auto;
+    margin-top: 50px;
+    width: 100%;
+    height: 40vh;
+    background-color: lightgoldenrodyellow;
+    cursor: all-scroll;
+}
+.wrap {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+.item {
+    display: flex;
+    width: 50vw;
+    height: 100%;
+}
+.item h1 {
+    margin: auto;
+}
+.banner {
+    width: 100vw;
+}

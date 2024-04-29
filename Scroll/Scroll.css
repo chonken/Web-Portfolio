@@ -9,3 +9,24 @@
     height: 100vh;
     overflow: hidden;
 }
+
+/* 水平滾動 */
+/* 要是可以不用position: absolute就可讓容器寬度超過視窗，就可以純CSS了 */
+.horizon-by-rotate {
+    position: relative;
+}
+.horizon-by-rotate > .rotate-scrollbar {
+    position: relative;
+    transform-origin: top left;
+    overflow: auto;
+}
+.horizon-by-rotate > .rotate-scrollbar::-webkit-scrollbar {
+    width: 0;
+}
+.horizon-by-rotate > .rotate-scrollbar > .rotate-content {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    transform-origin: top left;
+    transform: rotate(90deg);
+}

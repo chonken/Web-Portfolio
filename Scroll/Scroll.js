@@ -36,6 +36,24 @@ export function Animation(targetScroll, target, ...args) {
 		}
 	}
 }
+/**
+ * 水平滾動，主要用rotate方式實現，適合用於局部展示
+ * 優點: 完全與一般滾動一樣流暢
+ * 缺點: 滾動條在上方、除非是正方形否則內容物的寬度單位不能是%、放在一般滾動裡面的話，必須滑鼠移入(至少要動一次)才能開始滾動，否則會被判定是一般滾動
+ */
+export function HorizonByRotate() {
+	const target = document.querySelector('.horizon-by-rotate')
+	const scrollbar = document.querySelector('.rotate-scrollbar')
+	const content = document.querySelector('.rotate-content')
+	scrollbar.style.width = target.clientHeight + 'px'
+	scrollbar.style.height = target.clientWidth + 'px'
+	scrollbar.style.transform = `translateY(${target.clientHeight}px) rotate(270deg)`
+	content.style.height = target.clientHeight + 'px'
+}
+export function HorizonByAnimation(targetScroll, target, ...args) {
+	function hr() {}
+	Animation(targetScroll, target, hr, ...args)
+}
 
 function progress(target) {
 	const screen = target.querySelector('.screen')

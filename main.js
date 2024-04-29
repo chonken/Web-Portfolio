@@ -1,6 +1,6 @@
 import { Slide, Focus, Fade, Gallery } from './Carousel/Carousel.js'
 import { Honeycomb } from './Menu/Menu.js'
-import { Animation } from './Scroll/Scroll.js'
+import { Animation, HorizonByRotate } from './Scroll/Scroll.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -590,6 +590,7 @@ function CanvasInit(data, dom) {
 	}
 }
 function ScrollInit(data, dom) {
+	// 動畫
 	Animation(window, dom.banner, {
 		start: 0,
 		duration: 'auto',
@@ -627,8 +628,8 @@ function ScrollInit(data, dom) {
 			dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
 		},
 	})
-	// Animation(window, dom.animation)
-	// Animation(window, dom.mandatory)
+	// 水平移動
+	HorizonByRotate()
 }
 function AnimationInit(data, dom) {
 	// 自動加入所有CSS動畫底下的作品到ul裡
