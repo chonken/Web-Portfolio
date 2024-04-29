@@ -214,7 +214,7 @@ canvas {
 .scroll .screen {
     outline: 1px solid red;
 }
-.scroll .wrape {
+.scroll .scroll-wrap {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -251,7 +251,7 @@ canvas {
     height: 25vh;
     opacity: 0;
 }
-.scroll .scroll-animation .wrape {
+.scroll .scroll-animation .scroll-wrap {
     transition: all 0.2s ease-out;
 }
 .scroll .scroll-animation a {
@@ -268,6 +268,47 @@ canvas {
 .scroll .scroll-animation p {
     color: white;
 }
+.scroll .scroll-horizon {
+    position: relative;
+    height: 100vh;
+    background-color: brown;
+}
+.horizon-by-rotate > .rotate-scrollbar {
+    background-color: aquamarine;
+}
+.horizon-by-rotate > .rotate-scrollbar > .rotate-content {
+    background-color: aqua;
+}
+.scroll .scroll-horizon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.scroll .scroll-horizon .screen > .horizon-by-rotate {
+    width: 100%;
+    height: 100vh;
+}
+.scroll .scroll-horizon .wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100%;
+}
+.scroll .scroll-horizon .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100%;
+}
+/* 刪 */
+/* main {
+    scale: 0.5;
+}
+.scrollbar {
+    height: 100vh;
+    overflow: auto;
+} */
+
 .scroll .scroll-mandatory {
     position: relative;
     height: 200vh;
@@ -284,7 +325,7 @@ canvas {
     display: flex;
     flex-wrap: nowrap;
 }
-.animation .wrape {
+.animation .wrap {
     min-width: 33.33%;
 }
 .animation li {

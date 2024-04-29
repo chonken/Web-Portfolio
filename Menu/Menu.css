@@ -7,14 +7,14 @@
     /* 暫定方案，未考慮完整蜂巢外的情況 */
     aspect-ratio: 1/1;
 }
-.honeycomb .wrape {
+.honeycomb .wrap {
     display: flex;
     justify-content: center;
     flex: 1;
     /* 暫定方案，未考慮完整蜂巢外的情況 */
     margin-top: -6.25%;
 }
-.honeycomb .wrape:nth-child(1) {
+.honeycomb .wrap:nth-child(1) {
     margin-top: 0%;
 }
 .honeycomb li {

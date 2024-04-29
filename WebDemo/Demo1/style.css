@@ -170,7 +170,7 @@ nav li:hover {
 }
 
 /* about */
-.about .wrape {
+.about .wrap {
     display: flex;
     flex-wrap: wrap;
     padding-top: 60px;
@@ -648,7 +648,7 @@ nav li:hover {
     height: 435px;
     background-color: lightgrey;
 }
-.why-us .wrape {
+.why-us .wrap {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -698,30 +698,30 @@ footer .title p {
     padding-right: 25px;
     border-top: 1px solid darkred;
 }
-footer .content .wrape {
+footer .content .wrap {
     display: flex;
     justify-content: space-around;
     border-bottom: 1px solid darkred;
     padding-bottom: 25px;
     width: calc(100% - 460px);
 }
-footer .content .wrape .anchor {
+footer .content .wrap .anchor {
     margin-bottom: 8px;
     text-decoration: none;
     font-size: 14px;
     color: black;
 }
-footer .content .wrape h5,
-footer .content .wrape .h5 {
+footer .content .wrap h5,
+footer .content .wrap .h5 {
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
     color: black;
 }
-footer .content .wrape h5 {
+footer .content .wrap h5 {
     margin-bottom: 10px;
 }
-footer .content .wrape .h5 {
+footer .content .wrap .h5 {
     margin-bottom: 30px;
 }
 footer .content .item {
@@ -744,7 +744,7 @@ footer .info .bottom {
 footer .info .bottom small {
     margin-bottom: 40px;
 }
-footer .info .wrape {
+footer .info .wrap {
     display: flex;
     flex-grow: 1;
 }
@@ -822,7 +822,7 @@ footer .to-top::after {
         padding-bottom: 20px;
         width: 100%;
     }
-    footer .content .wrape {
+    footer .content .wrap {
         width: 100%;
     }
     footer .info {
@@ -843,7 +843,7 @@ footer .to-top::after {
     footer .info .bottom .license {
         margin-left: 50px;
     }
-    footer .info .wrape {
+    footer .info .wrap {
         order: 1;
     }
 }
@@ -855,7 +855,7 @@ footer .to-top::after {
         padding-bottom: 20px;
         width: 100%;
     }
-    footer .content .wrape {
+    footer .content .wrap {
         flex-wrap: wrap;
         width: 100%;
     }
@@ -887,7 +887,7 @@ footer .to-top::after {
     footer .info .bottom .license {
         margin-left: 50px;
     }
-    footer .info .wrape {
+    footer .info .wrap {
         order: 1;
     }
     footer .info .email {
@@ -905,7 +905,7 @@ footer .to-top::after {
         padding-bottom: 20px;
         width: 100%;
     }
-    footer .content .wrape {
+    footer .content .wrap {
         flex-direction: column;
         flex-wrap: wrap;
         width: 100%;
@@ -938,7 +938,7 @@ footer .to-top::after {
     footer .info .bottom .license {
         margin-left: 50px;
     }
-    footer .info .wrape {
+    footer .info .wrap {
         flex-direction: column;
         order: 1;
     }

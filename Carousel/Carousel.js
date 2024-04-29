@@ -380,7 +380,7 @@ export function Gallery(itemList, verticle, target, transition = null) {
 		}
 	}
 	function _wrpe(wrpe) {
-		wrpe.classList.add('wrape')
+		wrpe.classList.add('wrap')
 	}
 	newTarget.appendChild(fragmentF)
 	newTarget.appendChild(fragmentS)
@@ -388,7 +388,7 @@ export function Gallery(itemList, verticle, target, transition = null) {
 	target.parentNode.replaceChild(newTarget, target)
 
 	// 輪播
-	const wrapes = newTarget.querySelectorAll('.wrape')
+	const wrapes = newTarget.querySelectorAll('.wrap')
 	const len = wrapes.length / 3
 	let nodesOverallWidth = []
 	let i = 0

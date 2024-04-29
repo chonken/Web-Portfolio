@@ -118,23 +118,23 @@ function CustomerCarousel(quantity) {
 	const fragmentF = document.createDocumentFragment()
 	const fragmentS = document.createDocumentFragment()
 
-	let wrape = document.createElement('div')
+	let wrap = document.createElement('div')
 	let clone = document.createElement('div')
-	wrape.classList.add('wrape')
-	clone.classList.add('wrape')
+	wrap.classList.add('wrap')
+	clone.classList.add('wrap')
 	let _c = 0
 	list.forEach((item) => {
 		if (_c > 2) {
-			fragmentF.appendChild(wrape)
-			wrape = document.createElement('div')
-			wrape.classList.add('wrape')
+			fragmentF.appendChild(wrap)
+			wrap = document.createElement('div')
+			wrap.classList.add('wrap')
 			fragmentS.appendChild(clone)
 			clone = document.createElement('div')
-			clone.classList.add('wrape')
+			clone.classList.add('wrap')
 			_c = 1
 		} else _c++
 
-		wrape.appendChild(item)
+		wrap.appendChild(item)
 		clone.appendChild(item.cloneNode(true))
 	})
 	customerCarousel.appendChild(fragmentF)
