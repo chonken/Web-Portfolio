@@ -11,7 +11,8 @@
 }
 
 /* 水平滾動 */
-/* 要是可以不用position: absolute就可讓容器寬度超過視窗，就可以純CSS了 */
+/* Rotate */
+/* 要是哪天可以不用position: absolute就可讓容器寬度超過視窗，就可以用aspect-ratio做到純CSS了 */
 .horizon-by-rotate {
     position: relative;
 }
@@ -29,4 +30,14 @@
     left: 100%;
     transform-origin: top left;
     transform: rotate(90deg);
+}
+/* Animation */
+.horizon-by-ani {
+    position: relative;
+}
+.horizon-by-ani > .ani-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
 }

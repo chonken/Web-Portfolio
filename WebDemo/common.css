@@ -46,6 +46,12 @@ img {
     margin-left: auto;
     margin-right: auto;
 }
+.hide-scrollbar::-webkit-scrollbar {
+    width: 0;
+}
+.scrollbar-track-recolor {
+    background-color: var(--scrollbar-tranck-color);
+}
 .scroll-auto {
     overflow: auto !important;
 }
@@ -75,4 +81,12 @@ img {
 }
 .fill-width {
     width: 100% !important;
+}
+.fill-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.flex-column {
+    flex-direction: column;
 }

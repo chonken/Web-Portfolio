@@ -1,6 +1,10 @@
 import { Slide, Focus, Fade, Gallery } from './Carousel/Carousel.js'
 import { Honeycomb } from './Menu/Menu.js'
-import { Animation, HorizonByRotate } from './Scroll/Scroll.js'
+import {
+	Animation,
+	HorizonByRotate,
+	HorizonByAnimation,
+} from './Scroll/Scroll.js'
 
 /** @type {HTMLCanvasElement} */
 const banner = document.getElementById('banner')
@@ -305,6 +309,7 @@ function Init() {
 			self: scroll,
 			banner: scroll.querySelector('.scroll-banner'),
 			animation: scroll.querySelector('.scroll-animation'),
+			horizon: scroll.querySelector('.scroll-horizon'),
 			mandatory: scroll.querySelector('.scroll-mandatory'),
 		},
 		animation: {
@@ -598,9 +603,56 @@ function ScrollInit(data, dom) {
 			const r = Math.round(255 - (255 * percent) / 100)
 			const g = Math.round(255 - (255 * percent) / 100)
 			const b = Math.round(255 - (255 * percent) / 100)
+
+			if (percent <= 0) {
+				document.body.classList.remove('scrollbar-track-recolor')
+			} else {
+				document.body.style.setProperty(
+					'--scrollbar-tranck-color',
+					`rgb(${r},${g},${b})`
+				)
+				document.body.classList.add('scrollbar-track-recolor')
+			}
 			dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
 			const title = dom.banner.querySelector('.title')
 			title.style.transform = `translateX(-${percent}%)`
+		},
+	})
+	// 水平滾動
+	const ani = dom.horizon.querySelector('.horizon-by-ani')
+	const title = dom.horizon.querySelector('.title')
+	HorizonByAnimation(window, dom.horizon, {
+		start: {
+			duration: 0.5,
+			pixelHeight: innerHeight,
+			fn: (percent) => {
+				if (percent <= 0) {
+					document.body.classList.remove('hide-scrollbar')
+				} else {
+					document.body.classList.add('hide-scrollbar')
+				}
+
+				title.style.transform = `translateY(calc(${100 - percent}% + ${
+					25 * ((100 - percent) / 100)
+				}px))`
+				ani.style.transform = `translateX(${100 - percent}%)`
+			},
+		},
+		end: {
+			duration: 0.5,
+			pixelHeight: innerHeight,
+			fn: (percent) => {
+				if (percent > 0) {
+					title.style.transform = `translateY(calc(${percent}% + ${
+						25 * (percent / 100)
+					}px))`
+					ani.style.transform = `translateX(-${percent}%)`
+				}
+
+				if (percent >= 100) {
+					document.body.classList.remove('hide-scrollbar')
+				}
+			},
 		},
 	})
 	Animation(window, dom.animation, {
@@ -618,6 +670,7 @@ function ScrollInit(data, dom) {
 			}
 		},
 	})
+	// 滾動吸附
 	Animation(window, dom.mandatory, {
 		start: 0,
 		duration: 'auto',
@@ -625,11 +678,19 @@ function ScrollInit(data, dom) {
 			const r = Math.round((255 * percent) / 100)
 			const g = Math.round((255 * percent) / 100)
 			const b = Math.round((255 * percent) / 100)
+
+			if (percent >= 100) {
+				document.body.classList.remove('scrollbar-track-recolor')
+			} else {
+				document.body.style.setProperty(
+					'--scrollbar-tranck-color',
+					`rgb(${r},${g},${b})`
+				)
+				document.body.classList.add('scrollbar-track-recolor')
+			}
 			dom.self.style.backgroundColor = `rgb(${r},${g},${b})`
 		},
 	})
-	// 水平移動
-	HorizonByRotate()
 }
 function AnimationInit(data, dom) {
 	// 自動加入所有CSS動畫底下的作品到ul裡
