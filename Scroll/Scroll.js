@@ -1,10 +1,10 @@
 /**
- * 依據滾輪的滾動播放動畫
+ * 依據設定的進度條的滾動播放動畫
  * @param {Element} targetScroll 滾動條的所在元素
  * @param {Element} target 要執行動畫的目標容器
  * @param  {...Function} args 要執行的所有動畫
  */
-export function Animation(targetScroll, target, ...args) {
+export function Progress(targetScroll, target, ...args) {
 	// 整理args
 	convert(args)
 
@@ -112,7 +112,7 @@ export function HorizonByAnimation(
 		})
 	}
 
-	Animation(targetScroll, target, ...args)
+	Progress(targetScroll, target, ...args)
 }
 
 function progress(target) {

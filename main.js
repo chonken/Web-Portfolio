@@ -1,7 +1,7 @@
 import { Slide, Focus, Fade, Gallery } from './Carousel/Carousel.js'
 import { Honeycomb } from './Menu/Menu.js'
 import {
-	Animation,
+	Progress,
 	HorizonByRotate,
 	HorizonByAnimation,
 } from './Scroll/Scroll.js'
@@ -308,7 +308,7 @@ function Init() {
 		scroll: {
 			self: scroll,
 			banner: scroll.querySelector('.scroll-banner'),
-			animation: scroll.querySelector('.scroll-animation'),
+			progress: scroll.querySelector('.scroll-progress'),
 			horizon: scroll.querySelector('.scroll-horizon'),
 			mandatory: scroll.querySelector('.scroll-mandatory'),
 		},
@@ -596,7 +596,7 @@ function CanvasInit(data, dom) {
 }
 function ScrollInit(data, dom) {
 	// 動畫
-	Animation(window, dom.banner, {
+	Progress(window, dom.banner, {
 		start: 0,
 		duration: 'auto',
 		fn: (percent) => {
@@ -655,11 +655,11 @@ function ScrollInit(data, dom) {
 			},
 		},
 	})
-	Animation(window, dom.animation, {
+	Progress(window, dom.progress, {
 		start: 0,
 		duration: 'auto',
 		fn: (percent) => {
-			const title = dom.animation.querySelector('.title')
+			const title = dom.progress.querySelector('.title')
 
 			if (percent <= 25) {
 				title.style.opacity = percent / 25
@@ -671,7 +671,7 @@ function ScrollInit(data, dom) {
 		},
 	})
 	// 滾動吸附
-	Animation(window, dom.mandatory, {
+	Progress(window, dom.mandatory, {
 		start: 0,
 		duration: 'auto',
 		fn: (percent) => {

@@ -9,12 +9,12 @@ window.addEventListener('scroll', () => {
 		scrollY >= slide.offsetTop &&
 		scrollY <= slide.offsetTop + slide.offsetHeight
 	) {
-		slideAnimation(progress(slide))
+		slideProgress(progress(slide))
 	} else if (
 		scrollY >= fade.offsetTop &&
 		scrollY <= fade.offsetTop + fade.offsetHeight
 	) {
-		fadeAnimation(progress(fade))
+		fadeProgress(progress(fade))
 	}
 })
 
@@ -27,13 +27,13 @@ function progress(element) {
 }
 
 const slideArea = document.querySelector('.slide-area')
-function slideAnimation(progress) {
+function slideProgress(progress) {
 	slideArea.style.left = -(100 - progress) + '%'
 	slideArea.style.opacity = (progress - 30) / 50
 }
 
 const fadeArea = fade.querySelectorAll('.card')
-function fadeAnimation(progress) {
+function fadeProgress(progress) {
 	const deg = Math.round(progress * 3.6)
 	fadeArea.forEach((item, index) => {
 		item.style.transform = `perspective(500px) rotateX(${deg}deg)`
