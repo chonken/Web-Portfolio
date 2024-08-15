@@ -1,0 +1,106 @@
+.cube {
+  position: relative;
+  transform-style: preserve-3d;
+}
+.cube .surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotateY(calc(var(--x) * 90deg)) rotateX(calc(var(--y) * 90deg)) translateZ(calc(var(--r) / 2));
+}
+.pyramid {
+  position: relative;
+  transform-style: preserve-3d;
+}
+.pyramid .surface {
+  --gap: calc((100% - 50% * sqrt(3)) / 2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% var(--gap), 0% calc(100% - var(--gap)), 100% calc(100% - var(--gap)));
+  transform-origin: 50% calc(100% - var(--gap));
+  /* rotateX(?) */
+  transform: rotateY(calc(var(--x) * 120deg)) rotateX(19deg) translateZ(calc(var(--r) / 2 / sqrt(3)));
+  /* transform: rotateY(calc(var(--x) * 120deg)) rotateX(0) translateZ(calc(var(--r) / 2 / sqrt(3))); */
+}
+.pyramid .surface:nth-last-of-type(1) {
+  /* translate(?) */
+  transform: rotateZ(180deg) rotateX(90deg) translateY(calc(var(--r) / 2 / sqrt(3))) translateZ(calc(var(--r) / -10));
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@keyframes display {
+  0% {
+    transform: rotateY(720deg) rotateZ(0);
+  }
+  25% {
+    transform: rotateY(540deg) rotateZ(25deg);
+  }
+  50% {
+    transform: rotateY(360deg) rotateZ(0);
+  }
+  75% {
+    transform: rotateY(180deg) rotateZ(-25deg);
+  }
+  100% {
+    transform: rotateY(0) rotateZ(0);
+  }
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1600px;
+  min-height: 100vh;
+  gap: 80px;
+}
+.frame {
+  /* transition: 0.8s cubic-bezier(0.2, 1, 0.9, 0.99); */
+  transform-style: preserve-3d;
+}
+.cube,
+.pyramid {
+  transition: 0.4s;
+  pointer-events: none;
+  user-select: none;
+  animation: display 10s linear infinite;
+}
+.cube .surface,
+.pyramid .surface {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  background-image: radial-gradient(brown 0%, rgb(100, 0, 0) 100%);
+}
+.cube {
+  --r: 100px;
+  width: var(--r);
+  height: var(--r);
+}
+.pyramid {
+  --w: 100;
+  --r: calc(var(--w) * 1px);
+  width: var(--r);
+  height: var(--r);
+}
+.pyramid .surface {
+  padding-top: calc(var(--r) / 2 / sqrt(3));
+}
