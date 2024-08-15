@@ -25,7 +25,6 @@
   transform-origin: 50% calc(100% - var(--gap));
   /* rotateX(?) */
   transform: rotateY(calc(var(--x) * 120deg)) rotateX(19deg) translateZ(calc(var(--r) / 2 / sqrt(3)));
-  /* transform: rotateY(calc(var(--x) * 120deg)) rotateX(0) translateZ(calc(var(--r) / 2 / sqrt(3))); */
 }
 .pyramid .surface:nth-last-of-type(1) {
   /* translate(?) */
@@ -72,7 +71,6 @@ body {
   gap: 80px;
 }
 .frame {
-  /* transition: 0.8s cubic-bezier(0.2, 1, 0.9, 0.99); */
   transform-style: preserve-3d;
 }
 .cube,
