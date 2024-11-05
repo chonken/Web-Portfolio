@@ -176,14 +176,11 @@ canvas {
     outline: 1px solid red;
 }
 .canvas ul {
-    position: relative;
-    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
     aspect-ratio: calc(16 / (9 * 0.6));
 }
 .canvas li {
-    position: absolute;
-    top: 0;
-    left: 20%;
     width: 60%;
     aspect-ratio: 16/9;
     background-color: white;

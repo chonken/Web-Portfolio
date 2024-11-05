@@ -1,0 +1,85 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+}
+
+section {
+  margin: 80px 0;
+  padding: 0 5%;
+}
+
+h2 {
+  margin-bottom: 40px;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 700px;
+}
+.carousel {
+  position: relative;
+}
+.carousel .prev {
+  position: absolute;
+  top: calc(50% - 20px);
+  left: 0;
+  display: none;
+  width: 40px;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  outline: 1px solid red;
+}
+.carousel .next {
+  position: absolute;
+  top: calc(50% - 20px);
+  right: 0;
+  display: none;
+  width: 40px;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  outline: 1px solid red;
+}
+.wrap {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.wrap .item {
+  width: 60%;
+  max-width: 400px;
+  background-color: white;
+  flex-shrink: 0;
+}
+.card {
+  border: 1px solid #000;
+}
+.card-img img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  min-height: 200px;
+  object-fit: cover;
+  object-position: center;
+}
+.card-content {
+  padding: 20px 5%;
+}
+
+@media screen and (max-width: 768px) {
+  .wrap .item {
+    width: 100%;
+  }
+  .carousel .prev {
+    display: block;
+  }
+  .carousel .next {
+    display: block;
+  }
+}
