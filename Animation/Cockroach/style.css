@@ -1,0 +1,306 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: burlywood;
+}
+
+/* main */
+.screen {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+.cockroach {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.cockroach label {
+  display: block;
+  padding: 40px;
+  cursor: pointer;
+}
+@keyframes struggle {
+  100% {
+    transform: rotate(30deg);
+  }
+}
+@keyframes dead {
+  100% {
+    opacity: 0;
+  }
+}
+.cockroach input[type="checkbox"] {
+  display: none;
+}
+.cockroach input[type="checkbox"]:checked + * label {
+  pointer-events: none;
+}
+.cockroach input[type="checkbox"]:checked + * :is(.walk, .walk .swing-1, .walk .swing-2) {
+  animation-play-state: paused;
+}
+.cockroach input[type="checkbox"]:checked + * .walk .img {
+  animation: struggle .1s ease-in-out alternate-reverse infinite, dead 2s 4s ease forwards;
+}
+.cockroach input[type="checkbox"]:checked + * .snsecticides {
+  animation-play-state: running;
+}
+.cockroach input[type="checkbox"]:checked + * .snsecticides .spray {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 0;
+}
+.cockroach .walk {
+  transform: translateX(-100vw);
+  animation: walkking 5s ease-in infinite;
+}
+@keyframes walkking {
+  0% {
+    transform: translateY(calc(-72vmax - 50%));
+  }
+  100% {
+    transform: translateY(calc(72vmax + 50%));
+  }
+}
+.cockroach .snsecticides {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 120%;
+  opacity: 0;
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform: rotate(90deg);
+  animation: spraying .8s linear forwards paused;
+}
+@keyframes spraying {
+  0% {
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.cockroach .snsecticides .bottle-head {
+  position: relative;
+  width: 20%;
+  height: 20%;
+  background-color: #000;
+}
+.cockroach .snsecticides .bottle-body {
+  position: relative;
+  width: 50%;
+  height: 80%;
+  background-color: #ccc;
+}
+.cockroach .snsecticides .bottle-head::after,
+.cockroach .snsecticides .bottle-body::before,
+.cockroach .snsecticides .bottle-body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  border-radius: 50%;
+}
+.cockroach .snsecticides .bottle-head::after {
+  content: '';
+  top: -5%;
+  background-color: #000;
+}
+.cockroach .snsecticides .bottle-body::before {
+  content: '';
+  bottom: -5%;
+  background-color: #666;
+}
+.cockroach .snsecticides .bottle-body::after {
+  content: '';
+  top: -5%;
+  background-color: #ccc;
+}
+.cockroach .spray {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: radial-gradient(#fff 20%, transparent 70%);
+  transition: transform .3s ease, opacity 1s .2s ease;
+}
+.cockroach .swing-1 {
+  animation: swinging-1 .3s ease-in-out alternate-reverse infinite;
+}
+@keyframes swinging-1 {
+  0% {
+    transform: translateX(-25%);
+  }
+  100% {
+    transform: translateX(25%);
+  }
+}
+.cockroach .swing-2 {
+  animation: swinging-2 .3s -.15s ease-in-out alternate-reverse infinite;
+}
+@keyframes swinging-2 {
+  0% {
+    transform: rotate(15deg);
+  }
+  100% {
+    transform: rotate(-15deg);
+  }
+}
+.cockroach .img {
+  position: relative;
+  width: 40px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(to left, transparent 48%, #000 48%, #000 52%, transparent 52%)top / 100% 75% no-repeat, linear-gradient(#490e0e 75%, #c1885e 90%);
+}
+.cockroach .img::before,
+.cockroach .img::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: linear-gradient(transparent,
+      #000) border-box;
+  mask: linear-gradient(#fff, #fff) border-box, linear-gradient(#fff, #fff) padding-box;
+  mask-composite: subtract;
+  transform-origin: bottom;
+  z-index: -1;
+}
+.cockroach .img::before {
+  left: -30%;
+  transform: rotate(-30deg);
+  clip-path: polygon(0 0, 0% 100%, 80% 100%);
+}
+.cockroach .img::after {
+  right: -30%;
+  transform: rotate(30deg);
+  clip-path: polygon(100% 0, 20% 100%, 100% 100%);
+}
+
+/* decorations */
+.cockroach:nth-of-type(1) .direction {
+  transform: rotate(-45deg);
+}
+.cockroach:nth-of-type(2) .direction {
+  transform-origin: 40% 40%;
+  transform: rotate(45deg);
+}
+.cockroach:nth-of-type(3) .direction {
+  transform-origin: 60% 60%;
+  transform: rotate(160deg);
+}
+.cockroach:nth-of-type(4) .direction {
+  transform: rotate(30deg);
+}
+.cockroach:nth-of-type(5) .direction {
+  transform-origin: 30% 30%;
+  transform: rotate(70deg);
+}
+.cockroach:nth-of-type(6) .direction {
+  transform-origin: 30% 40%;
+  transform: rotate(100deg);
+}
+.cockroach:nth-of-type(7) .direction {
+  transform-origin: 40% 50%;
+  transform: rotate(140deg);
+}
+.cockroach:nth-of-type(8) .direction {
+  transform-origin: 50% 50%;
+  transform: rotate(160deg);
+}
+.cockroach:nth-of-type(9) .direction {
+  transform: rotate(180deg);
+}
+.cockroach:nth-of-type(10) .direction {
+  transform-origin: 70% 70%;
+  transform: rotate(220deg);
+}
+.cockroach:nth-of-type(11) .direction {
+  transform-origin: 20% 20%;
+  transform: rotate(260deg);
+}
+.cockroach:nth-of-type(12) .direction {
+  transform-origin: 80% 80%;
+  transform: rotate(300deg);
+}
+.cockroach:nth-of-type(4) {
+  left: 70%;
+}
+.cockroach:nth-of-type(5) {
+  top: 70%;
+}
+.cockroach:nth-of-type(7) {
+  left: 80%;
+}
+.cockroach:nth-of-type(8) {
+  left: 30%;
+}
+.cockroach:nth-of-type(9) {
+  left: 85%;
+}
+.cockroach:nth-of-type(10) {
+  left: 10%;
+}
+.cockroach:nth-of-type(11) {
+  top: 80%;
+}
+.cockroach:nth-of-type(12) {
+  left: 20%;
+}
+.cockroach:nth-of-type(5) .walk {
+  animation-delay: 3s;
+}
+.cockroach:nth-of-type(6) .walk {
+  animation-delay: 5s;
+}
+.cockroach:nth-of-type(7) .walk {
+  animation-delay: 2s;
+}
+.cockroach:nth-of-type(9) .walk {
+  animation-delay: 1s;
+}
+.cockroach:nth-of-type(10) .walk {
+  animation-delay: 3s;
+}
+.cockroach:nth-of-type(11) .walk {
+  animation-delay: 2s;
+}
+:is(.cockroach:nth-of-type(2),
+  .cockroach:nth-of-type(3),
+  .cockroach:nth-of-type(4),
+  .cockroach:nth-of-type(5),
+  .cockroach:nth-of-type(6),
+  .cockroach:nth-of-type(7),
+  .cockroach:nth-of-type(8),
+  .cockroach:nth-of-type(9),
+  .cockroach:nth-of-type(10),
+  .cockroach:nth-of-type(11),
+  .cockroach:nth-of-type(12)) {
+  display: none;
+}
+.screen:has(.cockroach:nth-of-type(1) input[type="checkbox"]:checked) :is(.cockroach:nth-of-type(2), .cockroach:nth-of-type(3)) {
+  display: block;
+}
+.screen:has(.cockroach:nth-of-type(2) input[type="checkbox"]:checked) :is(.cockroach:nth-of-type(4), .cockroach:nth-of-type(5), .cockroach:nth-of-type(6), .cockroach:nth-of-type(7), .cockroach:nth-of-type(8), .cockroach:nth-of-type(9), .cockroach:nth-of-type(10), .cockroach:nth-of-type(11), .cockroach:nth-of-type(12)) {
+  display: block;
+}
