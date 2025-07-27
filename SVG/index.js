@@ -1,12 +1,13 @@
+'use strict'
 const NS = 'http://www.w3.org/2000/svg'
 
 /**
  * @typedef {Object} CoordData
  * @property {'number'|'string'} type - 資料類型，可為 'number' 或 'string'
- * @property {number} [min=100] - 數值型最小值（type 為 'number' 時適用）
- * @property {number} [max=500] - 數值型最大值（type 為 'number' 時適用）
- * @property {number} [splitNumber=5] - 分段數（含起點與終點）
- * @property {string[]} [datas] - 字串型刻度資料（type 為 'string' 時適用）
+ * @property {number} [min] - 數值型最小值（type 為 'number' 時適用）
+ * @property {number} [max] - 數值型最大值（type 為 'number' 時適用）
+ * @property {number} [splitNumber] - 分段數（含起點與終點）
+ * @property {string[]} [labels] - 字串型刻度資料（type 為 'string' 時適用）
  */
 export class Chart {
   /**
@@ -19,40 +20,67 @@ export class Chart {
    * @param {number} [options.pb=30] - 下邊距
    * @param {number} [options.pl=30] - 左邊距
    * @param {number} [options.pr=15] - 右邊距
-   * @param {CoordData} [options.xData] - x 軸設定資料
-   * @param {CoordData} [options.yData] - y 軸設定資料
+   * @param {Object[]} [options.data] - 資料
+   * @param {CoordData} [options.xLabel] - x 軸設定資料
+   * @param {CoordData} [options.yLabel] - y 軸設定資料
    */
   constructor(selector, options = {}) {
     this.svg = document.querySelector(selector)
     this.type = options.type || 'line'
     this.width = options.width || 500
     this.height = options.height || 500
-    this.pt = options.pt || 15
+    this.pt = options.pt || 20
     this.pb = options.pb || 30
-    this.pl = options.pl || 30
+    this.pl = options.pl || 40
     this.pr = options.pr || 15
-
-    this.xData = options.xData || { type: 'number', min: 100, max: 500, splitNumber: 5 }
-    this.yData = options.yData || { type: 'number', min: 100, max: 500, splitNumber: 5 }
-
-    this.lineXs = this.xData.datas?.length || this.xData.splitNumber
-    this.lineYs = this.yData.datas?.length || this.yData.splitNumber
-
     this.contentW = this.width - this.pl - this.pr
     this.contentH = this.height - this.pt - this.pb
+
+    this.xLabel = options.xLabel
+    this.yLabel = options.yLabel
+    this.data = options.data
+    this._init()
+  }
+
+  _init() {
+    switch (this.type) {
+      case 'line':
+        this.xLabel = this.xLabel || { type: 'string', labels: ['A', 'B', 'C', 'D', 'E'], splitNumber: 5 }
+        this.yLabel = this.yLabel || { type: 'number', min: 100, max: 500, splitNumber: 5 }
+        this.xLabel.splitNumber = this.xLabel.splitNumber || this.xLabel.labels?.length
+        this.yLabel.splitNumber = this.yLabel.splitNumber || this.yLabel.labels?.length
+        this.data = this.data || [200, 400, 300, 500, 100]
+        break
+      case 'bar':
+        break
+      case 'column':
+        this.xLabel = this.xLabel || { type: 'string', labels: ['A', 'B', 'C', 'D', 'E'], splitNumber: 5 }
+        this.yLabel = this.yLabel || { type: 'number', min: 100, max: 500, splitNumber: 5 }
+        this.xLabel.splitNumber = this.xLabel.splitNumber || this.xLabel.labels?.length
+        this.yLabel.splitNumber = this.yLabel.splitNumber || this.yLabel.labels?.length
+        this.data = this.data || [200, 400, 300, 500, 100]
+        break
+      case 'pie':
+        break
+    }
   }
 
   render() {
-    this.renderCoord()
     switch (this.type) {
       case 'line':
+        this.renderCoord()
         this.renderLineChart()
         break
       case 'bar':
+        this.renderCoord()
         this.renderBarChart()
         break
       case 'column':
+        this.renderCoord()
         this.renderColumnChart()
+        break
+      case 'pie':
+        this.renderPieChart()
         break
     }
   }
@@ -64,55 +92,61 @@ export class Chart {
     this.drawXLabels()
   }
 
-  renderLineChart(
-    dataPoints = [
-      { x: 100, y: 200 },
-      { x: 200, y: 300 },
-      { x: 300, y: 250 },
-      { x: 400, y: 350 },
-    ]
-  ) {
+  /**
+   * 繪製折線圖
+   */
+  renderLineChart() {
     const group = document.createElementNS(NS, 'g')
     group.classList.add('line-chart')
 
-    const points = dataPoints.map((point) => {
-      // 尚未處理純字串輸入值
-      const svgX = this.pl + ((point.x - this.xData.min) / (this.xData.max - this.xData.min)) * this.contentW
-      const svgY = this.pt + (1 - (point.y - this.yData.min) / (this.yData.max - this.yData.min)) * this.contentH
-      return { ...point, svgX, svgY }
+    const points = this.data.map((data, i) => {
+      const svgX = this.pl + (this.xLabel.type === 'number' ? (data - this.xLabel.min) / (this.xLabel.max - this.xLabel.min) : i / (this.xLabel.splitNumber - 1)) * this.contentW
+      const svgY = this.pt + (this.yLabel.type === 'number' ? 1 - (data - this.yLabel.min) / (this.yLabel.max - this.yLabel.min) : i / (this.yLabel.splitNumber - 1)) * this.contentH
+      return { ...data, svgX, svgY }
     })
 
-    // 畫點
-    for (const p of points) {
-      const circle = document.createElementNS(NS, 'circle')
-      circle.setAttribute('cx', p.svgX)
-      circle.setAttribute('cy', p.svgY)
-      circle.setAttribute('r', 4)
-      circle.setAttribute('fill', '#007bff')
-      group.appendChild(circle)
+    for (let i = 0; i < points.length; i++) {
+      const p1 = points[i]
+      const p2 = points[i + 1]
 
+      // 畫點
+      const circle = document.createElementNS(NS, 'circle')
+      circle.setAttribute('cx', p1.svgX)
+      circle.setAttribute('cy', p1.svgY)
+      circle.setAttribute('r', 4)
+      circle.setAttribute('fill', '#fff')
+      circle.setAttribute('stroke', '#007bff')
+      circle.setAttribute('stroke-width', 4)
+      circle.style.cursor = 'pointer'
+      circle.style.transition = '.4s'
+
+      // 提示
       const text = document.createElementNS(NS, 'text')
-      text.setAttribute('x', p.svgX + 6)
-      text.setAttribute('y', p.svgY - 6)
+      text.setAttribute('x', p1.svgX + 6)
+      text.setAttribute('y', p1.svgY - 6)
       text.setAttribute('font-size', '14px')
       text.setAttribute('font-family', 'Arial')
       text.setAttribute('fill', '#333')
-      text.textContent = p.x + ',' + p.y
-      group.appendChild(text)
-    }
+      text.textContent = this.data[i]
+      text.style.opacity = 0
+      text.style.transition = '.4s'
+      circle.onmouseenter = () => ((text.style.opacity = 1), circle.setAttribute('r', 8))
+      circle.onmouseleave = () => ((text.style.opacity = 0), circle.setAttribute('r', 4))
 
-    // 畫線
-    for (let i = 0; i < points.length - 1; i++) {
-      const p1 = points[i]
-      const p2 = points[i + 1]
-      const line = document.createElementNS(NS, 'line')
-      line.setAttribute('x1', p1.svgX)
-      line.setAttribute('y1', p1.svgY)
-      line.setAttribute('x2', p2.svgX)
-      line.setAttribute('y2', p2.svgY)
-      line.setAttribute('stroke', '#007bff')
-      line.setAttribute('stroke-width', 2)
-      group.appendChild(line)
+      // 畫線
+      if (i < points.length - 1) {
+        const line = document.createElementNS(NS, 'line')
+        line.setAttribute('x1', p1.svgX)
+        line.setAttribute('y1', p1.svgY)
+        line.setAttribute('x2', p2.svgX)
+        line.setAttribute('y2', p2.svgY)
+        line.setAttribute('stroke', '#007bff')
+        line.setAttribute('stroke-width', 2)
+        group.appendChild(line)
+      }
+
+      group.appendChild(circle)
+      group.appendChild(text)
     }
 
     this.svg.appendChild(group)
@@ -125,12 +159,12 @@ export class Chart {
     path.setAttribute('stroke-width', 1)
 
     let d = ''
-    for (let x = 0; x < this.lineXs; x++) {
-      const xPos = this.pl + x * (this.contentW / (this.lineXs - 1))
+    for (let x = 0; x < this.xLabel.splitNumber; x++) {
+      const xPos = this.pl + x * (this.contentW / (this.xLabel.splitNumber - 1))
       d += `M${xPos} ${this.pt} V${this.height - this.pb} `
     }
-    for (let y = 0; y < this.lineYs; y++) {
-      const yPos = this.pt + y * (this.contentH / (this.lineYs - 1))
+    for (let y = 0; y < this.yLabel.splitNumber; y++) {
+      const yPos = this.pt + y * (this.contentH / (this.yLabel.splitNumber - 1))
       d += `M${this.pl} ${yPos} H${this.width - this.pr} `
     }
 
@@ -146,7 +180,7 @@ export class Chart {
     const group = document.createElementNS(NS, 'g')
     group.classList.add('y-text')
 
-    const labels = this.getLabels(this.yData)
+    const labels = this.getLabels(this.yLabel)
 
     for (let i = 0; i < labels.length; i++) {
       const yPos = this.pt + (i * this.contentH) / (labels.length - 1)
@@ -167,7 +201,7 @@ export class Chart {
     const group = document.createElementNS(NS, 'g')
     group.classList.add('x-text')
 
-    const labels = this.getLabels(this.xData)
+    const labels = this.getLabels(this.xLabel)
 
     for (let i = 0; i < labels.length; i++) {
       const xPos = this.pl + (i * this.contentW) / (labels.length - 1)
@@ -185,13 +219,13 @@ export class Chart {
     this.svg.appendChild(group)
   }
 
-  getLabels(data) {
-    if (data.type === 'string' && Array.isArray(data.datas)) {
-      return data.datas
-    } else if (data.type === 'number') {
-      const max = data.max ?? 500
-      const min = data.min ?? 100
-      const splitNumber = data.splitNumber ?? 5
+  getLabels(label) {
+    if (label.type === 'string' && Array.isArray(label.labels)) {
+      return label.labels
+    } else if (label.type === 'number') {
+      const max = label.max ?? 500
+      const min = label.min ?? 100
+      const splitNumber = label.splitNumber ?? 5
       const space = (max - min) / (splitNumber - 1)
       return Array.from({ length: splitNumber }, (_, i) => (min + i * space).toFixed(2).replace(/\.00$/, ''))
     }
